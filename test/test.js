@@ -106,7 +106,7 @@ removeComment = false
 });
 
 avaTest("read", async(assert) => {
-    const pathFile = join(__dirname, "silmio.toml");
+    const pathFile = join(__dirname, "slimio.toml");
 
     const mani = new Manifest(pathFile);
     const toml = await mani.read();
