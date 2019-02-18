@@ -82,8 +82,6 @@ class Manifest {
         const tomlObj = await this.read();
         const update = Object.assign(tomlObj, updateObj);
         await writeFile(this.filePath, TOML.stringify(update));
-
-        return this.dir;
     }
 
     /**
