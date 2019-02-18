@@ -26,7 +26,8 @@
     },
     "homepage": "https://github.com/SlimIO/Manifester#readme",
     "dependencies": {
-        "@iarna/toml": "^2.2.1"
+        "@iarna/toml": "^2.2.1",
+        "@slimio/is": "^1.4.0"
     },
     "devDependencies": {
         "@commitlint/cli": "^7.5.2",

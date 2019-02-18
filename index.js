@@ -7,6 +7,7 @@ const { isAbsolute, join } = require("path");
 
 // Require Third-party Dependencies
 const TOML = require("@iarna/toml");
+const is = require("@slimio/is");
 
 const DEFAULT_TOML = {
     name: "project",
@@ -36,7 +37,7 @@ class Manifest {
      * @throws {TypeError|Error}
      */
     constructor(filePath = join(process.cwd(), "slimio.toml")) {
-        if (typeof filePath !== "undefined" && typeof filePath !== "string") {
+        if (!is.nullOrUndefined(filePath) && !is.string(filePath)) {
             throw new TypeError("filePath param must be a typeof <string>");
         }
         if (!isAbsolute(filePath)) {
@@ -57,6 +58,9 @@ class Manifest {
      * @returns {Promise}
      */
     async create(tomlObj = DEFAULT_TOML) {
+        if (!is.object(tomlObj)) {
+            throw new TypeError("tomlObj param must be a typeof <object>");
+        }
         await writeFile(this.filePath, TOML.stringify(tomlObj));
     }
 
@@ -71,7 +75,10 @@ class Manifest {
      *
      * @returns {Promise}
      */
-    async update(updateObj) {
+    async update(updateObj = {}) {
+        if (!is.object(updateObj)) {
+            throw new TypeError("updateObj param must be a typeof <object>");
+        }
         const tomlObj = await this.read();
         const update = Object.assign(tomlObj, updateObj);
         await writeFile(this.filePath, TOML.stringify(update));

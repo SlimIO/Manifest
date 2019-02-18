@@ -30,7 +30,22 @@ avaTest("constructor: Error filePath", (assert) => {
     assert.throws(() => {
         new Manifest("foo");
     }, { instanceOf: Error, message: "filePath param must ba an absolute path" });
+});
 
+avaTest("create error ", async(assert) => {
+    const pathFile = join(__dirname, "createError.toml");
+    const mani = new Manifest(pathFile);
+    await assert.throwsAsync(async() => {
+        await mani.create("foo");
+    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
+
+    await assert.throwsAsync(async() => {
+        await mani.create(true);
+    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
+
+    await assert.throwsAsync(async() => {
+        await mani.create(10);
+    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
 });
 
 avaTest("Create default", async(assert) => {
@@ -103,6 +118,22 @@ removeComment = false
     assert.is(readed, defaultCreate);
 
     await unlink(pathFile);
+});
+
+avaTest("update error ", async(assert) => {
+    const pathFile = join(__dirname, "updateError.toml");
+    const mani = new Manifest(pathFile);
+    await assert.throwsAsync(async() => {
+        await mani.update("foo");
+    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
+
+    await assert.throwsAsync(async() => {
+        await mani.update(true);
+    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
+
+    await assert.throwsAsync(async() => {
+        await mani.update(10);
+    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
 });
 
 avaTest("read", async(assert) => {
