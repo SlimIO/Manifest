@@ -24,7 +24,9 @@
         "url": "https://github.com/SlimIO/Manifester/issues"
     },
     "homepage": "https://github.com/SlimIO/Manifester#readme",
-    "dependencies": {},
+    "dependencies": {
+        "@iarna/toml": "^2.2.1"
+    },
     "devDependencies": {
         "@commitlint/cli": "^7.5.2",
         "@commitlint/config-conventional": "^7.5.0",
