@@ -1,5 +1,5 @@
 {
-    "name": "@slimio/manifester",
+    "name": "@slimio/manifest",
     "version": "0.1.0",
     "description": "",
     "main": "index.js",
@@ -16,7 +16,8 @@
     },
     "keywords": [
         "SlimIO",
-        "monitoring"
+        "monitoring",
+        "manifest"
     ],
     "author": "SlimIO",
     "license": "MIT",
