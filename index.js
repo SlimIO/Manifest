@@ -58,7 +58,7 @@ class Manifest {
      * @returns {Promise}
      */
     async create(tomlObj = DEFAULT_TOML) {
-        if (!is.object(tomlObj)) {
+        if (!is.plainObject(tomlObj)) {
             throw new TypeError("tomlObj param must be a typeof <object>");
         }
         await writeFile(this.filePath, TOML.stringify(tomlObj));
@@ -76,7 +76,7 @@ class Manifest {
      * @returns {Promise}
      */
     async update(updateObj = {}) {
-        if (!is.object(updateObj)) {
+        if (!is.plainObject(updateObj)) {
             throw new TypeError("updateObj param must be a typeof <object>");
         }
         const tomlObj = await this.read();

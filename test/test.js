@@ -46,6 +46,10 @@ avaTest("create error ", async(assert) => {
     await assert.throwsAsync(async() => {
         await mani.create(10);
     }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
+
+    await assert.throwsAsync(async() => {
+        await mani.create(null);
+    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
 });
 
 avaTest("Create default", async(assert) => {
@@ -133,6 +137,10 @@ avaTest("update error ", async(assert) => {
 
     await assert.throwsAsync(async() => {
         await mani.update(10);
+    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
+
+    await assert.throwsAsync(async() => {
+        await mani.update(null);
     }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
 });
 
