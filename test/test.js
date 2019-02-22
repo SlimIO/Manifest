@@ -1,9 +1,12 @@
+// Require Node.js Dependencies
+const { unlink, access } = require("fs").promises;
+const { join } = require("path");
+
 // Require Third-party Dependencies
 const avaTest = require("ava");
 const Manifest = require("../");
-
-const { unlink, access } = require("fs").promises;
-const { join } = require("path");
+const is = require("@slimio/is");
+const cloneDeep = require("lodash.clonedeep");
 
 const Types = new Set(["Addon", "NAPI", "CLI"]);
 const VALID_OBJ = {
@@ -16,164 +19,67 @@ const VALID_OBJ = {
 };
 
 function modifValidobj(obj) {
-    return Object.assign({}, VALID_OBJ, obj);
+    return Object.assign(cloneDeep(VALID_OBJ), obj);
 }
 
-avaTest("bypass", async(assert) => {
-    assert.pass();
+avaTest("Check Manifest static properties", async(assert) => {
+    assert.true(is.classObject(Manifest));
+    assert.true(is.string(Manifest.DEFAULT_FILE));
+    assert.is(Manifest.DEFAULT_FILE, join(process.cwd(), "slimio.toml"));
 });
 
-// avaTest("private attribute", async(assert) => {
-//     const manifest = Manifest.create();
-//     const Mani = class Manifest {};
-//     assert.deepEqual(manifest, new Mani());
-//     assert.is(Object.keys(manifest).length, 0);
-//     assert.is(Reflect.ownKeys(manifest).length, 4);
-// });
+avaTest("Manifest properties must be private", async(assert) => {
+    const manifest = new Manifest({
+        name: "project", version: "2.0.0", type: "Addon"
+    });
 
-// avaTest("constructor: payload param must be a typeof <object>", (assert) => {
-//     assert.throws(() => {
-//         new Manifest();
-//     }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
+    assert.is(Object.keys(manifest).length, 0);
+    assert.is(Reflect.ownKeys(manifest).length, 4);
+    assert.is(manifest.name, "project");
+    assert.is(manifest.version, "2.0.0");
+    assert.is(manifest.type, "Addon");
+    assert.deepEqual(manifest.dependenciesn, {});
+});
 
-//     assert.throws(() => {
-//         new Manifest(10);
-//     }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
+avaTest("constructor: payload param must be a typeof <object>", (assert) => {
+    assert.throws(() => {
+        new Manifest(null);
+    }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
 
-//     assert.throws(() => {
-//         new Manifest(true);
-//     }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
+    assert.throws(() => {
+        new Manifest([]);
+    }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
+});
 
-//     assert.throws(() => {
-//         new Manifest([]);
-//     }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
+avaTest("constructor: payload.name must be a typeof <string>", (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ name: 10 }));
+    }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
+});
 
-//     assert.throws(() => {
-//         new Manifest(null);
-//     }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
-// });
+avaTest("constructor: payload.version must be a valid semver", (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ version: 10 }));
+    }, { instanceOf: Error, message: "payload.version must be a valid semver" });
+});
 
-// avaTest("constructor: payload.name must be a typeof <string>", (assert) => {
-//     assert.throws(() => {
-//         new Manifest({});
-//     }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
+avaTest(`constructor: payload.type must be one <string> of the Set : ${[...Types]}`, (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ type: 10 }));
+    }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
+});
 
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ name: 10 }));
-//     }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
+avaTest("constructor: payload.dependencies must be a typeof <object>", (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: 10 }));
+    }, { instanceOf: TypeError, message: "payload.dependencies must be a typeof <object>" });
+});
 
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ name: true }));
-//     }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ name: [] }));
-//     }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ name: {} }));
-//     }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ name: null }));
-//     }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
-// });
-
-// avaTest("constructor: payload.version must be a valid semver", (assert) => {
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ version: 10 }));
-//     }, { instanceOf: Error, message: "payload.version must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ version: true }));
-//     }, { instanceOf: Error, message: "payload.version must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ version: "foo" }));
-//     }, { instanceOf: Error, message: "payload.version must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ version: [] }));
-//     }, { instanceOf: Error, message: "payload.version must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ version: {} }));
-//     }, { instanceOf: Error, message: "payload.version must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ version: null }));
-//     }, { instanceOf: Error, message: "payload.version must be a valid semver" });
-// });
-
-// avaTest(`constructor: payload.type must be one <string> of the Set : ${[...Types]}`, (assert) => {
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ type: 10 }));
-//     }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ type: true }));
-//     }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ type: "foo" }));
-//     }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ type: [] }));
-//     }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ type: {} }));
-//     }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ type: null }));
-//     }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
-// });
-
-// avaTest("constructor: payload.dependencies must be a typeof <object>", (assert) => {
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: 10 }));
-//     }, { instanceOf: TypeError, message: "payload.dependencies must be a typeof <object>" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: true }));
-//     }, { instanceOf: TypeError, message: "payload.dependencies must be a typeof <object>" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: "foo" }));
-//     }, { instanceOf: TypeError, message: "payload.dependencies must be a typeof <object>" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: [] }));
-//     }, { instanceOf: TypeError, message: "payload.dependencies must be a typeof <object>" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: null }));
-//     }, { instanceOf: TypeError, message: "payload.dependencies must be a typeof <object>" });
-// });
-
-// avaTest("constructor: payload.dependencies.key must be a valid semver", (assert) => {
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: { abc: 10 } }));
-//     }, { instanceOf: Error, message: "payload.dependencies.abc must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: { abc: true } }));
-//     }, { instanceOf: Error, message: "payload.dependencies.abc must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: { abc: "foo" } }));
-//     }, { instanceOf: Error, message: "payload.dependencies.abc must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: { abc: [] } }));
-//     }, { instanceOf: Error, message: "payload.dependencies.abc must be a valid semver" });
-
-//     assert.throws(() => {
-//         new Manifest(modifValidobj({ dependencies: { abc: null } }));
-//     }, { instanceOf: Error, message: "payload.dependencies.abc must be a valid semver" });
-// });
+avaTest("constructor: payload.dependencies.key must be a valid semver", (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: { abc: 10 } }));
+    }, { instanceOf: Error, message: "payload.dependencies.abc must be a valid semver" });
+});
 
 // avaTest("read: filePath param must be a typeof <string>", (assert) => {
 //     assert.throws(() => {

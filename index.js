@@ -170,13 +170,8 @@ class Manifest {
             throw new Error(`Can't create new manifest at ${filePath}, one already exist!`);
         }
 
-        const name = config.name ? config.name : "project";
-        const version = config.version ? config.version : "1.0.0";
-        const type = config.type ? config.type : "Addon";
-        const dependencies = config.dependencies ? config.dependencies : {};
-
-        const manifest = new Manifest({ name, version, type, dependencies });
-        Manifest.writeOnDisk(manifest, filePath);
+        const manifest = new Manifest(config);
+        writeFileSync(filePath, TOML.stringify(manifest.toJSON()));
 
         return manifest;
     }
