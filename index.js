@@ -155,7 +155,7 @@ class Manifest {
      * @param {String} [filePath] filePath
      * @returns {Manifest}
      *
-     * @throws {TypeError}
+     * @throws {Error}
      */
     static create(config, filePath = Manifest.DEFAULT_FILE) {
         assertFilePath(filePath);
@@ -196,9 +196,11 @@ class Manifest {
      * @desc Write toml file if not exist.
      * @memberof Manifest#
      * @param {!Manifest} manifest manifest
-     * @param {String} filePath filePath
-     *
+     * @param {String} [filePath] filePath
      * @returns {void}
+     *
+     * @throws {TypeError}
+     * @throws {Error}
      */
     static writeOnDisk(manifest, filePath = Manifest.DEFAULT_FILE) {
         if (!(manifest instanceof Manifest)) {
@@ -219,7 +221,6 @@ class Manifest {
      * @method toJSON
      * @desc Return Manifest with private attributs as a JSON Object.
      * @memberof Manifest#
-     *
      * @returns {Payload}
      */
     toJSON() {
