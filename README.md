@@ -51,9 +51,9 @@ Default values:
 - dependecies: `{}` or `undefined`
 
 <details>
-    <summary>static create(obj?: Manifest.Payload): Manifest</summary>
+    <summary>static create(payload?: Manifest.Payload): Manifest</summary>
 
-Create Manifest object with a javascript object.
+Create Manifest object with an object.
 
 ```js
 const Manifest = require("@slimio/manifest");
