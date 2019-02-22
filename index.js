@@ -154,6 +154,7 @@ class Manifest {
      *
      * @static
      * @method create
+     * @desc Create Manifest object with an object.
      * @memberof Manifest#
      * @param {Payload} config Config manifest
      * @param {String=} [config.name = "project"] Name config
@@ -182,6 +183,7 @@ class Manifest {
      *
      * @static
      * @method read
+     * @desc Read toml file and return a specific Manifest object.
      * @memberof Manifest#
      * @param {String} filePath File path
      *
@@ -200,6 +202,7 @@ class Manifest {
      *
      * @static
      * @method writeOnDisk
+     * @desc Write toml file if not exist.
      * @memberof Manifest#
      * @param {!Manifest} manifest manifest
      * @param {String} filePath filePath
@@ -223,6 +226,7 @@ class Manifest {
      *
      * @public
      * @method toJSON
+     * @desc Return Manifest with private attributs as a JSON Object.
      * @memberof Manifest#
      *
      * @returns {Payload}
