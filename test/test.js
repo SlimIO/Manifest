@@ -1,5 +1,5 @@
 // Require Node.js Dependencies
-const { unlink, access } = require("fs").promises;
+const { promises: { unlink, access }, existsSync } = require("fs");
 const { join } = require("path");
 
 // Require Third-party Dependencies
@@ -17,6 +17,18 @@ const VALID_OBJ = {
         Event: "1.1.1"
     }
 };
+
+avaTest.after(async(assert) => {
+    if (existsSync(Manifest.DEFAULT_FILE)) {
+        await unlink(Manifest.DEFAULT_FILE);
+    }
+
+    const test = join(__dirname, "test.toml");
+    if (existsSync(test)) {
+        await unlink(test);
+    }
+    assert.pass();
+});
 
 function modifValidobj(obj) {
     return Object.assign(cloneDeep(VALID_OBJ), obj);
@@ -39,6 +51,14 @@ avaTest("Manifest properties must be private", async(assert) => {
     assert.is(manifest.version, "2.0.0");
     assert.is(manifest.type, "Addon");
     assert.deepEqual(manifest.dependencies, {});
+});
+
+avaTest("manifest toJSON()", (assert) => {
+    const payload = {
+        name: "project", version: "2.0.0", type: "Addon", dependencies: {}
+    };
+    const manifest = new Manifest(payload);
+    assert.deepEqual(payload, manifest.toJSON());
 });
 
 avaTest("constructor: payload param must be a typeof <object>", (assert) => {
@@ -81,157 +101,97 @@ avaTest("constructor: payload.dependencies.key must be a valid semver", (assert)
     }, { instanceOf: Error, message: "payload.dependencies.abc must be a valid semver" });
 });
 
-// avaTest("read: filePath param must be a typeof <string>", (assert) => {
-//     assert.throws(() => {
-//         Manifest.read();
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+avaTest("open: filePath param must be a typeof <string>", (assert) => {
+    assert.throws(() => {
+        Manifest.open(null);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+});
 
-//     assert.throws(() => {
-//         Manifest.read(10);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+avaTest("open: filePath param must ba an absolute path", (assert) => {
+    assert.throws(() => {
+        Manifest.open("foo");
+    }, { instanceOf: Error, message: "filePath param must ba an absolute path" });
+});
 
-//     assert.throws(() => {
-//         Manifest.read(true);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+avaTest("open: extension file must be a .toml", (assert) => {
+    assert.throws(() => {
+        Manifest.open(join(__dirname, "slimio.txt"));
+    }, { instanceOf: Error, message: "extension file must be a .toml" });
+});
 
-//     assert.throws(() => {
-//         Manifest.read([]);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+avaTest("open: slimio.toml (with absolute path)", (assert) => {
+    const manifest = Manifest.open(join(__dirname, "slimio.toml"));
+    assert.is(manifest.name, "project");
+    assert.is(manifest.version, "0.1.0");
+    assert.is(manifest.type, "CLI");
+    assert.deepEqual(manifest.dependencies, {});
+});
 
-//     assert.throws(() => {
-//         Manifest.read({});
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+avaTest("create: default", async(assert) => {
+    const filePath = join(__dirname, "test.toml");
+    const manifest = Manifest.create({
+        name: "project", version: "1.0.0", type: "Addon"
+    }, filePath);
+    await access(filePath);
 
-//     assert.throws(() => {
-//         Manifest.read(null);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
-// });
+    assert.is(manifest.name, "project");
+    assert.is(manifest.version, "1.0.0");
+    assert.is(manifest.type, "Addon");
+    assert.deepEqual(manifest.dependencies, {});
+    await unlink(filePath);
+});
 
-// avaTest("read: filePath param must ba an absolute path", (assert) => {
-//     assert.throws(() => {
-//         Manifest.read("foo");
-//     }, { instanceOf: Error, message: "filePath param must ba an absolute path" });
-// });
+avaTest("create: must throw if file exist", (assert) => {
+    const filePath = join(__dirname, "slimio.toml");
+    assert.throws(() => {
+        Manifest.create({
+            name: "project", version: "1.0.0", type: "Addon"
+        }, filePath);
+    }, { instanceOf: Error, message: `Can't create new manifest at ${filePath}!` });
+});
 
-// avaTest("read: extension file must be a .toml", (assert) => {
-//     assert.throws(() => {
-//         Manifest.read(join(__dirname, "slimio.txt"));
-//     }, { instanceOf: Error, message: "extension file must be a .toml" });
-// });
+avaTest("writeOnDisk: manifest must be instanceof Manifest Object", (assert) => {
+    assert.throws(() => {
+        Manifest.writeOnDisk(null);
+    }, { instanceOf: TypeError, message: "manifest param must be instanceof Manifest Object" });
+});
 
-// avaTest("read: slimio.toml", (assert) => {
-//     const manifest = Manifest.read(join(__dirname, "slimio.toml"));
-//     assert.is(manifest.name, "project");
-//     assert.is(manifest.version, "0.1.0");
-//     assert.is(manifest.type, "CLI");
-//     assert.deepEqual(manifest.dependencies, {});
-// });
+avaTest("writeOnDisk: unable to writeOnDisk", (assert) => {
+    const manifest = new Manifest(VALID_OBJ);
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest);
+    }, { instanceOf: Error, message: `Unable to write ${Manifest.DEFAULT_FILE} on disk!` });
+});
 
-// avaTest("create: default", (assert) => {
-//     const manifest = Manifest.create();
-//     assert.is(manifest.name, "project");
-//     assert.is(manifest.version, "1.0.0");
-//     assert.is(manifest.type, "Addon");
-//     assert.deepEqual(manifest.dependencies, {});
-// });
+avaTest("writeOnDisk: filePath param must be a typeof <string>", (assert) => {
+    const manifest = new Manifest(VALID_OBJ);
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, null);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+});
 
-// avaTest("create: with full obj", (assert) => {
-//     const manifest = Manifest.create({
-//         name: "created",
-//         version: "2.2.2",
-//         type: "NAPI",
-//         dependencies: {
-//             Event: "1.2.3",
-//             Alerting: "4.5.6"
-//         }
-//     });
+avaTest("writeOnDisk: filePath param must ba an absolute path", (assert) => {
+    const manifest = new Manifest(VALID_OBJ);
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, "foo");
+    }, { instanceOf: Error, message: "filePath param must ba an absolute path" });
+});
 
-//     assert.is(manifest.name, "created");
-//     assert.is(manifest.version, "2.2.2");
-//     assert.is(manifest.type, "NAPI");
-//     assert.deepEqual(manifest.dependencies, {
-//         Event: "1.2.3",
-//         Alerting: "4.5.6"
-//     });
-// });
+avaTest("writeOnDisk: extension file must be a .toml", (assert) => {
+    const manifest = new Manifest(VALID_OBJ);
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, join(__dirname, "slimio.txt"));
+    }, { instanceOf: Error, message: "extension file must be a .toml" });
+});
 
-// avaTest("writeOnDisk: filePath param must be a typeof <string>", (assert) => {
-//     const manifest = Manifest.create();
+avaTest("create and re-write on disk", async(assert) => {
+    const manifest = Manifest.create(VALID_OBJ);
+    await access(Manifest.DEFAULT_FILE);
 
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, 10);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+    const iManifest = Manifest.open();
+    assert.deepEqual(iManifest.toJSON(), VALID_OBJ);
 
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, true);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
-
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, []);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
-
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, {});
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
-
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, null);
-//     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
-// });
-
-// avaTest("writeOnDisk: filePath param must ba an absolute path", (assert) => {
-//     const manifest = Manifest.create();
-
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, "foo");
-//     }, { instanceOf: Error, message: "filePath param must ba an absolute path" });
-// });
-
-// avaTest("writeOnDisk: not toml file", (assert) => {
-//     const manifest = Manifest.create();
-
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, join(__dirname, "slimio.txt"));
-//     }, { instanceOf: Error, message: "extension file must be a .toml" });
-
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, join(__dirname, "slimio."));
-//     }, { instanceOf: Error, message: "extension file must be a .toml" });
-
-//     assert.throws(() => {
-//         Manifest.writeOnDisk(manifest, join(__dirname, "slimio"));
-//     }, { instanceOf: Error, message: "extension file must be a .toml" });
-// });
-
-// avaTest("writeOnDisk: file already exist", async(assert) => {
-//     const filePath = join(__dirname, "slimio.toml");
-//     await access(filePath);
-
-//     const manifest = Manifest.create();
-//     Manifest.writeOnDisk(manifest, filePath);
-
-//     const manifestRead = Manifest.read(filePath);
-//     assert.is(manifestRead.name, "read test");
-//     assert.is(manifestRead.version, "0.1.0");
-//     assert.is(manifestRead.type, "CLI");
-//     assert.deepEqual(manifestRead.dependencies, {});
-// });
-
-// avaTest("writeOnDisk: file doesn't exist", async(assert) => {
-//     const filePath = join(__dirname, "slimioWriteOnDisk.toml");
-//     await assert.throwsAsync(async() => {
-//         await access(filePath);
-//     }, { instanceOf: Error, code: "ENOENT" });
-
-//     const manifest = Manifest.create();
-//     Manifest.writeOnDisk(manifest, filePath);
-//     await access(filePath);
-
-//     const manifestRead = Manifest.read(filePath);
-//     assert.is(manifestRead.name, "project");
-//     assert.is(manifestRead.version, "1.0.0");
-//     assert.is(manifestRead.type, "Addon");
-//     assert.deepEqual(manifestRead.dependencies, {});
-
-//     await unlink(filePath);
-// });
+    Manifest.writeOnDisk(manifest);
+    await unlink(Manifest.DEFAULT_FILE);
+    assert.pass();
+});

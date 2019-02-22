@@ -152,22 +152,15 @@ class Manifest {
      * @desc Create Manifest object with an object.
      * @memberof Manifest#
      * @param {Payload} config Config manifest
-     * @param {String=} [config.name = "project"] Name config
-     * @param {String=} [config.version = "1.0.0"] Version config
-     * @param {String=} [config.type = "Addon"] Type project config
-     * @param {Object=} [config.dependencies = {}] Addon dependencies config
      * @param {String} [filePath] filePath
      * @returns {Manifest}
      *
      * @throws {TypeError}
      */
-    static create(config = Object.create(null), filePath = Manifest.DEFAULT_FILE) {
-        if (!is.plainObject(config)) {
-            throw new TypeError("config param must be a plainObject");
-        }
+    static create(config, filePath = Manifest.DEFAULT_FILE) {
         assertFilePath(filePath);
         if (existsSync(filePath)) {
-            throw new Error(`Can't create new manifest at ${filePath}, one already exist!`);
+            throw new Error(`Can't create new manifest at ${filePath}!`);
         }
 
         const manifest = new Manifest(config);
@@ -214,7 +207,7 @@ class Manifest {
         assertFilePath(filePath);
 
         if (!existsSync(filePath)) {
-            throw new Error(`No file ${filePath} on the system`);
+            throw new Error(`Unable to write ${filePath} on disk!`);
         }
         writeFileSync(filePath, TOML.stringify(manifest.toJSON()));
     }
