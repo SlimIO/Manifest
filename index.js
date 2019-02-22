@@ -1,9 +1,5 @@
 // Require Node Dependencies
-const {
-    accessSync,
-    readFileSync,
-    writeFileSync
-} = require("fs");
+const { readFileSync, writeFileSync, existsSync } = require("fs");
 const { isAbsolute, join, extname } = require("path");
 
 // Require Third-party Dependencies
@@ -19,6 +15,10 @@ const semver = require("semver");
  * @property {Object} dependencies Addon dependencies config
  */
 
+/**
+ * @const Types
+ * @type {Set<String>}
+ */
 const Types = new Set(["Addon", "NAPI", "CLI"]);
 
 /**
@@ -37,8 +37,7 @@ function assertFilePath(filePath) {
     if (!isAbsolute(filePath)) {
         throw new Error("filePath param must ba an absolute path");
     }
-    const ext = extname(filePath);
-    if (ext !== ".toml") {
+    if (extname(filePath) !== ".toml") {
         throw new Error("extension file must be a .toml");
     }
 }
@@ -78,6 +77,7 @@ const symDep = Symbol("dependencies");
 class Manifest {
     /**
      * @constructor
+     * @memberof Manifest#
      * @param {Payload} payload Payload config
      *
      * @throws {TypeError}
@@ -86,31 +86,26 @@ class Manifest {
         if (!is.plainObject(payload)) {
             throw new TypeError("payload param must be a typeof <object>");
         }
+        const { name, version, type, dependencies = Object.create(null) } = payload;
 
         if (!is.string(payload.name)) {
             throw new TypeError("payload.name must be a typeof <string>");
         }
-
-        const validSemVer = assertversion("payload.version", payload.version);
-
-        if (!Types.has(payload.type)) {
+        const validSemVer = assertversion("payload.version", version);
+        if (!Types.has(type)) {
             throw new TypeError(`payload.type must be one <string> of the Set : ${[...Types]}`);
         }
-
-        if (!is.undefined(payload.dependencies)) {
-            if (!is.plainObject(payload.dependencies)) {
-                throw new TypeError("payload.dependencies must be a typeof <object>");
-            }
-
-            for (const [key, value] of Object.entries(payload.dependencies)) {
-                assertversion(`payload.dependencies.${key}`, value);
-            }
+        if (!is.plainObject(dependencies)) {
+            throw new TypeError("payload.dependencies must be a typeof <object>");
+        }
+        for (const [key, value] of Object.entries(dependencies)) {
+            assertversion(`payload.dependencies.${key}`, value);
         }
 
-        Reflect.defineProperty(this, symName, { value: payload.name });
+        Reflect.defineProperty(this, symName, { value: name });
         Reflect.defineProperty(this, symVer, { value: validSemVer });
-        Reflect.defineProperty(this, symType, { value: payload.type });
-        Reflect.defineProperty(this, symDep, { value: payload.dependencies });
+        Reflect.defineProperty(this, symType, { value: type });
+        Reflect.defineProperty(this, symDep, { value: dependencies });
     }
 
     /**
@@ -161,40 +156,48 @@ class Manifest {
      * @param {String=} [config.version = "1.0.0"] Version config
      * @param {String=} [config.type = "Addon"] Type project config
      * @param {Object=} [config.dependencies = {}] Addon dependencies config
-     *
+     * @param {String} [filePath] filePath
      * @returns {Manifest}
+     *
+     * @throws {TypeError}
      */
-    static create(config = Object.create(null)) {
+    static create(config = Object.create(null), filePath = Manifest.DEFAULT_FILE) {
+        if (!is.plainObject(config)) {
+            throw new TypeError("config param must be a plainObject");
+        }
+        assertFilePath(filePath);
+        if (existsSync(filePath)) {
+            throw new Error(`Can't create new manifest at ${filePath}, one already exist!`);
+        }
+
         const name = config.name ? config.name : "project";
         const version = config.version ? config.version : "1.0.0";
         const type = config.type ? config.type : "Addon";
         const dependencies = config.dependencies ? config.dependencies : {};
 
-        return new Manifest({
-            name,
-            version,
-            type,
-            dependencies
-        });
+        const manifest = new Manifest({ name, version, type, dependencies });
+        Manifest.writeOnDisk(manifest, filePath);
+
+        return manifest;
     }
 
     /**
      * @version 0.1.0
      *
      * @static
-     * @method read
+     * @method open
      * @desc Read toml file and return a specific Manifest object.
      * @memberof Manifest#
-     * @param {String} filePath File path
+     * @param {String} [filePath] File path
      *
      * @returns {Manifest}
      */
-    static read(filePath) {
+    static open(filePath = Manifest.DEFAULT_FILE) {
         assertFilePath(filePath);
-        const toml = readFileSync(filePath, { encoding: "utf-8" });
-        const obj = TOML.parse(toml);
+        const buf = readFileSync(filePath);
+        const payload = TOML.parse(buf.toString());
 
-        return new Manifest(obj);
+        return new Manifest(payload);
     }
 
     /**
@@ -209,16 +212,16 @@ class Manifest {
      *
      * @returns {void}
      */
-    static writeOnDisk(manifest, filePath = join(process.cwd(), "slimio.toml")) {
+    static writeOnDisk(manifest, filePath = Manifest.DEFAULT_FILE) {
+        if (!(manifest instanceof Manifest)) {
+            throw new TypeError("manifest param must be instanceof Manifest Object");
+        }
         assertFilePath(filePath);
-        try {
-            accessSync(filePath);
+
+        if (!existsSync(filePath)) {
+            throw new Error(`No file ${filePath} on the system`);
         }
-        catch (err) {
-            if (err.code === "ENOENT") {
-                writeFileSync(filePath, TOML.stringify(manifest.toJSON()));
-            }
-        }
+        writeFileSync(filePath, TOML.stringify(manifest.toJSON()));
     }
 
     /**
@@ -240,5 +243,7 @@ class Manifest {
         };
     }
 }
+
+Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
 
 module.exports = Manifest;

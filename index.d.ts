@@ -8,10 +8,11 @@ declare class Manifest {
     readonly version: string;
     readonly type: Manifest.Type;
     readonly dependencies: Manifest.Dependencies;
+    public static DEFAULT_FILE: string;
 
     // Methods
-    static create(config?: Manifest.Payload): Manifest;
-    static read(filePath: string): Manifest;
+    static create(config?: Manifest.Payload, filePath?: string): Manifest;
+    static open(filePath?: string): Manifest;
     static writeOnDisk(manifest: Manifest, filePath?: string): void;
     public toJSON(): Manifest.Payload;
 }

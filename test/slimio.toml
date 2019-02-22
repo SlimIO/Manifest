@@ -1,7 +1,4 @@
-name = "read test"
-version = "0.1.0"
-type = "CLI"
-
-[abc]
-foo = 123
-bar = [ 1, 2, 3 ]
+name = "project"
+version = "1.0.0"
+type = "Addon"
+dependencies = { }
