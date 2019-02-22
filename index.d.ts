@@ -1,14 +1,12 @@
 /// <reference types="@types/node" />
 
-
 declare class Manifest {
-    // Constructor
     constructor(payload: Manifest.Payload);
 
     // Properties
     readonly name: string;
     readonly version: string;
-    readonly type: String;
+    readonly type: Manifest.Type;
     readonly dependencies: Manifest.Dependencies;
 
     // Methods
@@ -19,6 +17,8 @@ declare class Manifest {
 }
 
 declare namespace Manifest {
+    type Type = "Addon" | "NAPI" | "CLI";
+
     interface Dependencies {
         [name: string]: string;
     }
@@ -26,7 +26,7 @@ declare namespace Manifest {
     interface Payload {
         name: string;
         version: string;
-        type: string;
+        type: Type;
         dependencies?: Dependencies;
     }
 }
