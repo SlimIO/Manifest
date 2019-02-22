@@ -2,159 +2,270 @@
 const avaTest = require("ava");
 const Manifest = require("../");
 
-const {
-    unlink,
-    readFile
-} = require("fs").promises;
+const { unlink, access } = require("fs").promises;
 const { join } = require("path");
 
-avaTest("constructor: TypeError filePath", (assert) => {
+const ProjectType = new Set(["Addon", "NAPI", "CLI"]);
+const VALID_OBJ = {
+    name: "My project",
+    version: "7.7.7",
+    project_type: "Addon",
+    dependencies: {
+        Event: "1.1.1"
+    }
+};
+
+function modifValidobj(obj) {
+    return Object.assign({}, VALID_OBJ, obj);
+}
+
+avaTest("constructor: obj param must be a typeof <object>", (assert) => {
+    assert.throws(() => {
+        new Manifest();
+    }, { instanceOf: TypeError, message: "obj param must be a typeof <object>" });
+
     assert.throws(() => {
         new Manifest(10);
-    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+    }, { instanceOf: TypeError, message: "obj param must be a typeof <object>" });
 
     assert.throws(() => {
         new Manifest(true);
-    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+    }, { instanceOf: TypeError, message: "obj param must be a typeof <object>" });
 
     assert.throws(() => {
         new Manifest([]);
+    }, { instanceOf: TypeError, message: "obj param must be a typeof <object>" });
+
+    assert.throws(() => {
+        new Manifest(null);
+    }, { instanceOf: TypeError, message: "obj param must be a typeof <object>" });
+});
+
+avaTest("constructor: obj.name must be a typeof <string>", (assert) => {
+    assert.throws(() => {
+        new Manifest({});
+    }, { instanceOf: TypeError, message: "obj.name must be a typeof <string>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ name: 10 }));
+    }, { instanceOf: TypeError, message: "obj.name must be a typeof <string>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ name: true }));
+    }, { instanceOf: TypeError, message: "obj.name must be a typeof <string>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ name: [] }));
+    }, { instanceOf: TypeError, message: "obj.name must be a typeof <string>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ name: {} }));
+    }, { instanceOf: TypeError, message: "obj.name must be a typeof <string>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ name: null }));
+    }, { instanceOf: TypeError, message: "obj.name must be a typeof <string>" });
+});
+
+avaTest("constructor: obj.version must be a valid semver", (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ version: 10 }));
+    }, { instanceOf: Error, message: "obj.version must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ version: true }));
+    }, { instanceOf: Error, message: "obj.version must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ version: "foo" }));
+    }, { instanceOf: Error, message: "obj.version must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ version: [] }));
+    }, { instanceOf: Error, message: "obj.version must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ version: {} }));
+    }, { instanceOf: Error, message: "obj.version must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ version: null }));
+    }, { instanceOf: Error, message: "obj.version must be a valid semver" });
+});
+
+avaTest(`constructor: obj.project_type must be one <string> of the Set : ${[...ProjectType]}`, (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ project_type: 10 }));
+    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ project_type: true }));
+    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ project_type: "foo" }));
+    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ project_type: [] }));
+    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ project_type: {} }));
+    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ project_type: null }));
+    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+});
+
+avaTest("constructor: obj.dependencies must be a typeof <object>", (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: 10 }));
+    }, { instanceOf: TypeError, message: "obj.dependencies must be a typeof <object>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: true }));
+    }, { instanceOf: TypeError, message: "obj.dependencies must be a typeof <object>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: "foo" }));
+    }, { instanceOf: TypeError, message: "obj.dependencies must be a typeof <object>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: [] }));
+    }, { instanceOf: TypeError, message: "obj.dependencies must be a typeof <object>" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: null }));
+    }, { instanceOf: TypeError, message: "obj.dependencies must be a typeof <object>" });
+});
+
+avaTest("constructor: obj.dependencies.key must be a valid semver", (assert) => {
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: { abc: 10 } }));
+    }, { instanceOf: Error, message: "obj.dependencies.abc must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: { abc: true } }));
+    }, { instanceOf: Error, message: "obj.dependencies.abc must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: { abc: "foo" } }));
+    }, { instanceOf: Error, message: "obj.dependencies.abc must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: { abc: [] } }));
+    }, { instanceOf: Error, message: "obj.dependencies.abc must be a valid semver" });
+
+    assert.throws(() => {
+        new Manifest(modifValidobj({ dependencies: { abc: null } }));
+    }, { instanceOf: Error, message: "obj.dependencies.abc must be a valid semver" });
+});
+
+avaTest("read: filePath param must be a typeof <string>", (assert) => {
+    assert.throws(() => {
+        Manifest.read();
     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
 
     assert.throws(() => {
-        new Manifest({});
+        Manifest.read(10);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.read(true);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.read([]);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.read({});
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.read(null);
     }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
 });
 
-avaTest("constructor: Error filePath", (assert) => {
+avaTest("read: filePath param must ba an absolute path", (assert) => {
     assert.throws(() => {
-        new Manifest("foo");
+        Manifest.read("foo");
     }, { instanceOf: Error, message: "filePath param must ba an absolute path" });
 });
 
-avaTest("create error ", async(assert) => {
-    const pathFile = join(__dirname, "createError.toml");
-    const mani = new Manifest(pathFile);
-    await assert.throwsAsync(async() => {
-        await mani.create("foo");
-    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
-
-    await assert.throwsAsync(async() => {
-        await mani.create(true);
-    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
-
-    await assert.throwsAsync(async() => {
-        await mani.create(10);
-    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
-
-    await assert.throwsAsync(async() => {
-        await mani.create(null);
-    }, { instanceOf: TypeError, message: "tomlObj param must be a typeof <object>" });
+avaTest("read: extension file must be a .toml", (assert) => {
+    assert.throws(() => {
+        Manifest.read(join(__dirname, "slimio.txt"));
+    }, { instanceOf: Error, message: "extension file must be a .toml" });
 });
 
-avaTest("Create default", async(assert) => {
-    const pathFile = join(__dirname, "default.toml");
-    const defaultCreate = `name = "project"
-version = "1.0.0"
-project_type = "Addon"
-
-[dependencies]
-Events = "1.0.0"
-
-[psp]
-param = false
-
-[build]
-treeshake = true
-removeComment = false
-`;
-
-    const mani = new Manifest(pathFile);
-    await mani.create();
-
-    const readed = await readFile(pathFile, { encoding: "utf-8" });
-    assert.is(readed, defaultCreate);
-
-    await unlink(pathFile);
+avaTest("read: slimio.toml", (assert) => {
+    const manifest = Manifest.read(join(__dirname, "slimio.toml"));
+    assert.is(manifest.name, "read test");
+    assert.is(manifest.version, "0.1.0");
+    assert.is(manifest.projectType, "CLI");
+    assert.is(manifest.dependencies, undefined);
 });
 
-avaTest("Create non default", async(assert) => {
-    const pathFile = join(__dirname, "nonDefault.toml");
-    const expected = `foo = "bar"
+avaTest("create: default", (assert) => {
+    const manifest = Manifest.create();
+    assert.is(manifest.name, "project");
+    assert.is(manifest.version, "1.0.0");
+    assert.is(manifest.projectType, "Addon");
+    assert.deepEqual(manifest.dependencies, {});
+});
 
-[obj]
-bar = 10
-`;
-
-    const mani = new Manifest(pathFile);
-    await mani.create({
-        foo: "bar",
-        obj: {
-            bar: 10
+avaTest("create: with full obj", (assert) => {
+    const manifest = Manifest.create({
+        name: "created",
+        version: "2.2.2",
+        project_type: "NAPI",
+        dependencies: {
+            Event: "1.2.3",
+            Alerting: "4.5.6"
         }
     });
 
-    const readed = await readFile(pathFile, { encoding: "utf-8" });
-    assert.is(readed, expected);
-
-    await unlink(pathFile);
+    assert.is(manifest.name, "created");
+    assert.is(manifest.version, "2.2.2");
+    assert.is(manifest.projectType, "NAPI");
+    assert.deepEqual(manifest.dependencies, {
+        Event: "1.2.3",
+        Alerting: "4.5.6"
+    });
 });
 
-avaTest("Update with undefined", async(assert) => {
-    const pathFile = join(__dirname, "updateUndefined.toml");
-    const defaultCreate = `name = "project"
-version = "1.0.0"
-project_type = "Addon"
+avaTest("writeOnDisk: file already exist", async(assert) => {
+    const filePath = join(__dirname, "slimio.toml");
+    await access(filePath);
 
-[dependencies]
-Events = "1.0.0"
+    const manifest = Manifest.create();
+    Manifest.writeOnDisk(filePath, manifest);
 
-[build]
-treeshake = true
-removeComment = false
-`;
-
-    const mani = new Manifest(pathFile);
-    await mani.create();
-    await mani.update({ psp: undefined });
-
-    const readed = await readFile(pathFile, { encoding: "utf-8" });
-    assert.is(readed, defaultCreate);
-
-    await unlink(pathFile);
+    const manifestRead = Manifest.read(filePath);
+    assert.is(manifestRead.name, "read test");
+    assert.is(manifestRead.version, "0.1.0");
+    assert.is(manifestRead.projectType, "CLI");
+    assert.is(manifestRead.dependencies, undefined);
 });
 
-avaTest("update error ", async(assert) => {
-    const pathFile = join(__dirname, "updateError.toml");
-    const mani = new Manifest(pathFile);
+avaTest("writeOnDisk: file doesn't exist", async(assert) => {
+    const filePath = join(__dirname, "slimioWriteOnDisk.toml");
     await assert.throwsAsync(async() => {
-        await mani.update("foo");
-    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
+        await access(filePath);
+    }, { instanceOf: Error, code: "ENOENT" });
 
-    await assert.throwsAsync(async() => {
-        await mani.update(true);
-    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
+    const manifest = Manifest.create();
+    Manifest.writeOnDisk(filePath, manifest);
+    await access(filePath);
 
-    await assert.throwsAsync(async() => {
-        await mani.update(10);
-    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
+    const manifestRead = Manifest.read(filePath);
+    assert.is(manifestRead.name, "project");
+    assert.is(manifestRead.version, "1.0.0");
+    assert.is(manifestRead.projectType, "Addon");
+    assert.deepEqual(manifestRead.dependencies, {});
 
-    await assert.throwsAsync(async() => {
-        await mani.update(null);
-    }, { instanceOf: TypeError, message: "updateObj param must be a typeof <object>" });
-});
-
-avaTest("read", async(assert) => {
-    const pathFile = join(__dirname, "slimio.toml");
-
-    const mani = new Manifest(pathFile);
-    const toml = await mani.read();
-
-    const expected = {
-        abc: {
-            foo: 123,
-            bar: [1, 2, 3]
-        }
-    };
-    assert.deepEqual(toml, expected);
+    await unlink(filePath);
 });

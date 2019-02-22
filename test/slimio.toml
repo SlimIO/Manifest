@@ -1,3 +1,7 @@
+name = "read test"
+version = "0.1.0"
+project_type = "CLI"
+
 [abc]
 foo = 123
 bar = [ 1, 2, 3 ]
