@@ -11,7 +11,7 @@ const TOML = require("@iarna/toml");
 const is = require("@slimio/is");
 const semver = require("semver");
 
-const ProjectType = new Set(["Addon", "NAPI", "CLI"]);
+const Types = new Set(["Addon", "NAPI", "CLI"]);
 
 /**
  * @param {String} filePath filePath
@@ -43,7 +43,7 @@ function assertversion(paramName, value) {
 // Symbols
 const symName = Symbol("name");
 const symVer = Symbol("version");
-const symProjType = Symbol("project_type");
+const symType = Symbol("type");
 const symDep = Symbol("dependencies");
 
 /**
@@ -68,8 +68,8 @@ class Manifest {
 
         const validSemVer = assertversion("obj.version", obj.version);
 
-        if (!ProjectType.has(obj.project_type)) {
-            throw new TypeError(`obj.project_type must be one <string> of the Set : ${[...ProjectType]}`);
+        if (!Types.has(obj.type)) {
+            throw new TypeError(`obj.type must be one <string> of the Set : ${[...Types]}`);
         }
 
         if (!is.undefined(obj.dependencies)) {
@@ -82,35 +82,39 @@ class Manifest {
             }
         }
 
-        this[symName] = obj.name;
-        this[symVer] = validSemVer;
-        this[symProjType] = obj.project_type;
-        this[symDep] = obj.dependencies;
+        Reflect.defineProperty(this, symName, { value: obj.name });
+        Reflect.defineProperty(this, symVer, { value: validSemVer });
+        Reflect.defineProperty(this, symType, { value: obj.type });
+        Reflect.defineProperty(this, symDep, { value: obj.dependencies });
     }
 
     /**
-     *
+     * @member {String} name
+     * @memberof Manifest#
      */
     get name() {
         return this[symName];
     }
 
     /**
-     *
+     * @member {String} version
+     * @memberof Manifest#
      */
     get version() {
         return this[symVer];
     }
 
     /**
-     *
+     * @member {String} type
+     * @memberof Manifest#
      */
-    get projectType() {
-        return this[symProjType];
+    get type() {
+        return this[symType];
     }
 
     /**
-     *
+     * @member {String} name
+     * @memberof Manifest#
      */
     get dependencies() {
         return this[symDep];
@@ -126,16 +130,16 @@ class Manifest {
      *
      * @returns {Promise}
      */
-    static create(config = {}) {
+    static create(config = Object.create(null)) {
         const name = config.name ? config.name : "project";
         const version = config.version ? config.version : "1.0.0";
-        const projectType = config.project_type ? config.project_type : "Addon";
+        const type = config.type ? config.type : "Addon";
         const dependencies = config.dependencies ? config.dependencies : {};
 
         return new Manifest({
             name,
             version,
-            project_type: projectType,
+            type,
             dependencies
         });
     }
@@ -194,7 +198,7 @@ class Manifest {
         return {
             name: this.name,
             version: this.version,
-            project_type: this.projectType,
+            type: this.type,
             dependencies: this.dependencies
         };
     }

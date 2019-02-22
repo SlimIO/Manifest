@@ -5,11 +5,11 @@ const Manifest = require("../");
 const { unlink, access } = require("fs").promises;
 const { join } = require("path");
 
-const ProjectType = new Set(["Addon", "NAPI", "CLI"]);
+const Types = new Set(["Addon", "NAPI", "CLI"]);
 const VALID_OBJ = {
     name: "My project",
     version: "7.7.7",
-    project_type: "Addon",
+    type: "Addon",
     dependencies: {
         Event: "1.1.1"
     }
@@ -93,30 +93,30 @@ avaTest("constructor: obj.version must be a valid semver", (assert) => {
     }, { instanceOf: Error, message: "obj.version must be a valid semver" });
 });
 
-avaTest(`constructor: obj.project_type must be one <string> of the Set : ${[...ProjectType]}`, (assert) => {
+avaTest(`constructor: obj.type must be one <string> of the Set : ${[...Types]}`, (assert) => {
     assert.throws(() => {
-        new Manifest(modifValidobj({ project_type: 10 }));
-    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+        new Manifest(modifValidobj({ type: 10 }));
+    }, { instanceOf: TypeError, message: `obj.type must be one <string> of the Set : ${[...Types]}` });
 
     assert.throws(() => {
-        new Manifest(modifValidobj({ project_type: true }));
-    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+        new Manifest(modifValidobj({ type: true }));
+    }, { instanceOf: TypeError, message: `obj.type must be one <string> of the Set : ${[...Types]}` });
 
     assert.throws(() => {
-        new Manifest(modifValidobj({ project_type: "foo" }));
-    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+        new Manifest(modifValidobj({ type: "foo" }));
+    }, { instanceOf: TypeError, message: `obj.type must be one <string> of the Set : ${[...Types]}` });
 
     assert.throws(() => {
-        new Manifest(modifValidobj({ project_type: [] }));
-    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+        new Manifest(modifValidobj({ type: [] }));
+    }, { instanceOf: TypeError, message: `obj.type must be one <string> of the Set : ${[...Types]}` });
 
     assert.throws(() => {
-        new Manifest(modifValidobj({ project_type: {} }));
-    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+        new Manifest(modifValidobj({ type: {} }));
+    }, { instanceOf: TypeError, message: `obj.type must be one <string> of the Set : ${[...Types]}` });
 
     assert.throws(() => {
-        new Manifest(modifValidobj({ project_type: null }));
-    }, { instanceOf: TypeError, message: `obj.project_type must be one <string> of the Set : ${[...ProjectType]}` });
+        new Manifest(modifValidobj({ type: null }));
+    }, { instanceOf: TypeError, message: `obj.type must be one <string> of the Set : ${[...Types]}` });
 });
 
 avaTest("constructor: obj.dependencies must be a typeof <object>", (assert) => {
@@ -205,7 +205,7 @@ avaTest("read: slimio.toml", (assert) => {
     const manifest = Manifest.read(join(__dirname, "slimio.toml"));
     assert.is(manifest.name, "read test");
     assert.is(manifest.version, "0.1.0");
-    assert.is(manifest.projectType, "CLI");
+    assert.is(manifest.type, "CLI");
     assert.is(manifest.dependencies, undefined);
 });
 
@@ -213,7 +213,7 @@ avaTest("create: default", (assert) => {
     const manifest = Manifest.create();
     assert.is(manifest.name, "project");
     assert.is(manifest.version, "1.0.0");
-    assert.is(manifest.projectType, "Addon");
+    assert.is(manifest.type, "Addon");
     assert.deepEqual(manifest.dependencies, {});
 });
 
@@ -221,7 +221,7 @@ avaTest("create: with full obj", (assert) => {
     const manifest = Manifest.create({
         name: "created",
         version: "2.2.2",
-        project_type: "NAPI",
+        type: "NAPI",
         dependencies: {
             Event: "1.2.3",
             Alerting: "4.5.6"
@@ -230,7 +230,7 @@ avaTest("create: with full obj", (assert) => {
 
     assert.is(manifest.name, "created");
     assert.is(manifest.version, "2.2.2");
-    assert.is(manifest.projectType, "NAPI");
+    assert.is(manifest.type, "NAPI");
     assert.deepEqual(manifest.dependencies, {
         Event: "1.2.3",
         Alerting: "4.5.6"
@@ -247,7 +247,7 @@ avaTest("writeOnDisk: file already exist", async(assert) => {
     const manifestRead = Manifest.read(filePath);
     assert.is(manifestRead.name, "read test");
     assert.is(manifestRead.version, "0.1.0");
-    assert.is(manifestRead.projectType, "CLI");
+    assert.is(manifestRead.type, "CLI");
     assert.is(manifestRead.dependencies, undefined);
 });
 
@@ -264,8 +264,17 @@ avaTest("writeOnDisk: file doesn't exist", async(assert) => {
     const manifestRead = Manifest.read(filePath);
     assert.is(manifestRead.name, "project");
     assert.is(manifestRead.version, "1.0.0");
-    assert.is(manifestRead.projectType, "Addon");
+    assert.is(manifestRead.type, "Addon");
     assert.deepEqual(manifestRead.dependencies, {});
 
     await unlink(filePath);
 });
+
+avaTest("private attribute", async(assert) => {
+    const manifest = Manifest.create();
+    const Mani = class Manifest {};
+    assert.deepEqual(manifest, new Mani());
+    assert.is(Object.keys(manifest).length, 0);
+    assert.is(Reflect.ownKeys(manifest).length, 4);
+});
+
