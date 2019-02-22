@@ -38,7 +38,7 @@ avaTest("Manifest properties must be private", async(assert) => {
     assert.is(manifest.name, "project");
     assert.is(manifest.version, "2.0.0");
     assert.is(manifest.type, "Addon");
-    assert.deepEqual(manifest.dependenciesn, {});
+    assert.deepEqual(manifest.dependencies, {});
 });
 
 avaTest("constructor: payload param must be a typeof <object>", (assert) => {
