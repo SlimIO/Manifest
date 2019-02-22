@@ -11,12 +11,24 @@ const TOML = require("@iarna/toml");
 const is = require("@slimio/is");
 const semver = require("semver");
 
+/**
+ * @typedef {Object} Payload
+ * @property {String} name Name config
+ * @property {String} version Version config
+ * @property {String} type Type project config
+ * @property {Object} dependencies Addon dependencies config
+ */
+
 const Types = new Set(["Addon", "NAPI", "CLI"]);
 
 /**
- * @param {String} filePath filePath
+ * @version 0.1.0
+ * @function assertFilePath
+ * @desc File path checker
+ * @param {String} filePath File path
  *
- * @returns {coid}
+ * @throws {TypeError|Error}
+ * @returns {void}
  */
 function assertFilePath(filePath) {
     if (!is.string(filePath)) {
@@ -31,6 +43,16 @@ function assertFilePath(filePath) {
     }
 }
 
+/**
+ * @version 0.1.0
+ * @function assertversion
+ * @desc Sementic versionning checker
+ * @param {String} paramName Param name checking
+ * @param {String} value Sementic versionning value
+ *
+ * @throws {Error}
+ * @return {String}
+ */
 function assertversion(paramName, value) {
     const validSemver = semver.valid(value);
     if (is.nullOrUndefined(validSemver)) {
@@ -48,14 +70,17 @@ const symDep = Symbol("dependencies");
 
 /**
  * @class Manifest
- * @property {String} filePath File path
+ * @property {String} name Name config
+ * @property {String} version Version config
+ * @property {String} type Type project config
+ * @property {Object} dependencies Addon dependencies config
  */
 class Manifest {
     /**
      * @constructor
-     * @param {Object} obj obj
+     * @param {Payload} obj Object config
      *
-     * @throws {TypeError|Error}
+     * @throws {TypeError}
      */
     constructor(obj) {
         if (!is.plainObject(obj)) {
@@ -89,6 +114,7 @@ class Manifest {
     }
 
     /**
+     * @version 0.1.0
      * @member {String} name
      * @memberof Manifest#
      */
@@ -97,6 +123,7 @@ class Manifest {
     }
 
     /**
+     * @version 0.1.0
      * @member {String} version
      * @memberof Manifest#
      */
@@ -105,6 +132,7 @@ class Manifest {
     }
 
     /**
+     * @version 0.1.0
      * @member {String} type
      * @memberof Manifest#
      */
@@ -113,6 +141,7 @@ class Manifest {
     }
 
     /**
+     * @version 0.1.0
      * @member {String} name
      * @memberof Manifest#
      */
@@ -124,11 +153,15 @@ class Manifest {
      * @version 0.1.0
      *
      * @static
-     * @method wcreaterite
+     * @method create
      * @memberof Manifest#
-     * @param {Object} config config
+     * @param {Payload} config Config manifest
+     * @param {String=} [config.name = "project"] Name config
+     * @param {String=} [config.version = "1.0.0"] Version config
+     * @param {String=} [config.type = "Addon"] Type project config
+     * @param {Object=} [config.dependencies = {}] Addon dependencies config
      *
-     * @returns {Promise}
+     * @returns {Manifest}
      */
     static create(config = Object.create(null)) {
         const name = config.name ? config.name : "project";
@@ -150,9 +183,9 @@ class Manifest {
      * @static
      * @method read
      * @memberof Manifest#
-     * @param {String} filePath filePath
+     * @param {String} filePath File path
      *
-     * @returns {Object}
+     * @returns {Manifest}
      */
     static read(filePath) {
         assertFilePath(filePath);
@@ -168,7 +201,7 @@ class Manifest {
      * @static
      * @method writeOnDisk
      * @memberof Manifest#
-     * @param {Manifest} manifest manifest
+     * @param {!Manifest} manifest manifest
      * @param {String} filePath filePath
      *
      * @returns {void}
@@ -192,7 +225,7 @@ class Manifest {
      * @method toJSON
      * @memberof Manifest#
      *
-     * @returns {Object}
+     * @returns {Payload}
      */
     toJSON() {
         return {
