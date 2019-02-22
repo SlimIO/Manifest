@@ -3,27 +3,31 @@
 
 declare class Manifest {
     // Constructor
-    constructor(obj: Object);
+    constructor(payload: Manifest.Payload);
 
     // Properties
     readonly name: string;
     readonly version: string;
     readonly type: String;
-    readonly dependencies: Object;
+    readonly dependencies: Manifest.Dependencies;
 
     // Methods
-    static create(obj?: DefaultConfig): Manifest;
+    static create(config?: Manifest.Payload): Manifest;
     static read(filePath: string): Manifest;
     static writeOnDisk(manifest: Manifest, filePath?: string): void;
-    public toJSON(): DefaultConfig;
+    public toJSON(): Manifest.Payload;
 }
 
 declare namespace Manifest {
-    interface DefaultConfig {
+    interface Dependencies {
+        [name: string]: string;
+    }
+
+    interface Payload {
         name: string;
         version: string;
         type: string;
-        dependencies?: object;
+        dependencies?: Dependencies;
     }
 }
 

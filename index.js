@@ -78,39 +78,39 @@ const symDep = Symbol("dependencies");
 class Manifest {
     /**
      * @constructor
-     * @param {Payload} obj Object config
+     * @param {Payload} payload Payload config
      *
      * @throws {TypeError}
      */
-    constructor(obj) {
-        if (!is.plainObject(obj)) {
-            throw new TypeError("obj param must be a typeof <object>");
+    constructor(payload) {
+        if (!is.plainObject(payload)) {
+            throw new TypeError("payload param must be a typeof <object>");
         }
 
-        if (!is.string(obj.name)) {
-            throw new TypeError("obj.name must be a typeof <string>");
+        if (!is.string(payload.name)) {
+            throw new TypeError("payload.name must be a typeof <string>");
         }
 
-        const validSemVer = assertversion("obj.version", obj.version);
+        const validSemVer = assertversion("payload.version", payload.version);
 
-        if (!Types.has(obj.type)) {
-            throw new TypeError(`obj.type must be one <string> of the Set : ${[...Types]}`);
+        if (!Types.has(payload.type)) {
+            throw new TypeError(`payload.type must be one <string> of the Set : ${[...Types]}`);
         }
 
-        if (!is.undefined(obj.dependencies)) {
-            if (!is.plainObject(obj.dependencies)) {
-                throw new TypeError("obj.dependencies must be a typeof <object>");
+        if (!is.undefined(payload.dependencies)) {
+            if (!is.plainObject(payload.dependencies)) {
+                throw new TypeError("payload.dependencies must be a typeof <object>");
             }
 
-            for (const [key, value] of Object.entries(obj.dependencies)) {
-                assertversion(`obj.dependencies.${key}`, value);
+            for (const [key, value] of Object.entries(payload.dependencies)) {
+                assertversion(`payload.dependencies.${key}`, value);
             }
         }
 
-        Reflect.defineProperty(this, symName, { value: obj.name });
+        Reflect.defineProperty(this, symName, { value: payload.name });
         Reflect.defineProperty(this, symVer, { value: validSemVer });
-        Reflect.defineProperty(this, symType, { value: obj.type });
-        Reflect.defineProperty(this, symDep, { value: obj.dependencies });
+        Reflect.defineProperty(this, symType, { value: payload.type });
+        Reflect.defineProperty(this, symDep, { value: payload.dependencies });
     }
 
     /**

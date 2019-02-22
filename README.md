@@ -30,11 +30,17 @@ Manifest.writeOnDisk(manifest, filePath);
 ## API
 
 ```ts
-interface DefaultConfig {
-    name: string;
-    version: string;
-    type: string;
-    dependencies?: object;
+declare namespace Manifest {
+    interface Dependencies {
+        [name: string]: string;
+    }
+
+    interface Payload {
+        name: string;
+        version: string;
+        type: string;
+        dependencies?: Dependencies;
+    }
 }
 ```
 
@@ -45,7 +51,7 @@ Default values:
 - dependecies: `{}` or `undefined`
 
 <details>
-    <summary>static create(obj?: DefaultConfig): Manifest</summary>
+    <summary>static create(obj?: Manifest.Payload): Manifest</summary>
 
 Create Manifest object with a javascript object.
 
@@ -92,7 +98,7 @@ console.log(manifest.toJSON());
 </details>
 
 <details>
-    <summary>toJSON(): DefaultConfig</summary>
+    <summary>toJSON(): Manifest.Payload</summary>
     
 Return Manifest with private attributs as a JSON Object.
 ```js
