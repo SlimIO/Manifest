@@ -19,6 +19,14 @@ function modifValidobj(obj) {
     return Object.assign({}, VALID_OBJ, obj);
 }
 
+avaTest("private attribute", async(assert) => {
+    const manifest = Manifest.create();
+    const Mani = class Manifest {};
+    assert.deepEqual(manifest, new Mani());
+    assert.is(Object.keys(manifest).length, 0);
+    assert.is(Reflect.ownKeys(manifest).length, 4);
+});
+
 avaTest("constructor: obj param must be a typeof <object>", (assert) => {
     assert.throws(() => {
         new Manifest();
@@ -237,6 +245,55 @@ avaTest("create: with full obj", (assert) => {
     });
 });
 
+avaTest("writeOnDisk: filePath param must be a typeof <string>", (assert) => {
+    const manifest = Manifest.create();
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, 10);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, true);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, []);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, {});
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, null);
+    }, { instanceOf: TypeError, message: "filePath param must be a typeof <string>" });
+});
+
+avaTest("writeOnDisk: filePath param must ba an absolute path", (assert) => {
+    const manifest = Manifest.create();
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, "foo");
+    }, { instanceOf: Error, message: "filePath param must ba an absolute path" });
+});
+
+avaTest("writeOnDisk: not toml file", (assert) => {
+    const manifest = Manifest.create();
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, join(__dirname, "slimio.txt"));
+    }, { instanceOf: Error, message: "extension file must be a .toml" });
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, join(__dirname, "slimio."));
+    }, { instanceOf: Error, message: "extension file must be a .toml" });
+
+    assert.throws(() => {
+        Manifest.writeOnDisk(manifest, join(__dirname, "slimio"));
+    }, { instanceOf: Error, message: "extension file must be a .toml" });
+});
+
+
 avaTest("writeOnDisk: file already exist", async(assert) => {
     const filePath = join(__dirname, "slimio.toml");
     await access(filePath);
@@ -269,13 +326,5 @@ avaTest("writeOnDisk: file doesn't exist", async(assert) => {
     assert.deepEqual(manifestRead.dependencies, {});
 
     await unlink(filePath);
-});
-
-avaTest("private attribute", async(assert) => {
-    const manifest = Manifest.create();
-    const Mani = class Manifest {};
-    assert.deepEqual(manifest, new Mani());
-    assert.is(Object.keys(manifest).length, 0);
-    assert.is(Reflect.ownKeys(manifest).length, 4);
 });
 
