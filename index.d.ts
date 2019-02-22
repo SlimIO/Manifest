@@ -1,5 +1,6 @@
 /// <reference types="@types/node" />
 
+
 declare class Manifest {
     // Constructor
     constructor(obj: Object);
@@ -11,10 +12,19 @@ declare class Manifest {
     readonly dependencies: Object;
 
     // Methods
-    static create(obj?: object): Manifest;
+    static create(obj?: DefaultConfig): Manifest;
     static read(filePath: string): Manifest;
     static writeOnDisk(filePath: string, manifest: Manifest): void;
-    public toJSON(): Object;
+    public toJSON(): DefaultConfig;
+}
+
+declare namespace Manifest {
+    interface DefaultConfig {
+        name: string;
+        version: string;
+        project_type: string;
+        dependencies: object;
+    }
 }
 
 export as namespace Manifest;
