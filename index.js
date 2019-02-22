@@ -168,12 +168,12 @@ class Manifest {
      * @static
      * @method writeOnDisk
      * @memberof Manifest#
-     * @param {String} filePath filePath
      * @param {Manifest} manifest manifest
+     * @param {String} filePath filePath
      *
      * @returns {void}
      */
-    static writeOnDisk(filePath = join(process.cwd(), "slimio.toml"), manifest) {
+    static writeOnDisk(manifest, filePath = join(process.cwd(), "slimio.toml")) {
         assertFilePath(filePath);
         try {
             accessSync(filePath);

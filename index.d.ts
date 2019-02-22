@@ -14,7 +14,7 @@ declare class Manifest {
     // Methods
     static create(obj?: DefaultConfig): Manifest;
     static read(filePath: string): Manifest;
-    static writeOnDisk(filePath: string, manifest: Manifest): void;
+    static writeOnDisk(manifest: Manifest, filePath?: string): void;
     public toJSON(): DefaultConfig;
 }
 
@@ -23,7 +23,7 @@ declare namespace Manifest {
         name: string;
         version: string;
         type: string;
-        dependencies: object;
+        dependencies?: object;
     }
 }
 

@@ -3,6 +3,7 @@
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
 ![V1.0](https://img.shields.io/badge/version-0.1.0-blue.svg)
 
+This package was created to manage manifest for the SlimIO Project.
 
 ## Getting Started
 
@@ -14,128 +15,92 @@ $ npm i @slimio/manifester
 $ yarn add @slimio/manifester
 ```
 
+## Usage example
+Create and write TOML file
 
-# API
-
-<details>
-    <summary>constructor(filePath: string)</summary>
-
-> Default filePath value : `process.cwd() /slimio.toml`
-```js
-const Manifest = require("@slimio/manifest");
-const { join } = require("path");
-
-// Create slimio.toml at process.cwd
-const manifest = new Manifest();
-
-// Create manifest.toml at js file dirname
-const manifest = new Manifest(join(__dirname, "manifest.toml"));
-```
-</details>
-
-<details>
-    <summary>create(tomlObj: object): Promise</summary>
-Create TOML file with a javascript object
-
-```js
-const DEFAULT_TOML = {
-    name: "project",
-    version: "1.0.0",
-    project_type: "Addon",
-    dependencies: {
-        Events: "1.0.0"
-    },
-    psp: {
-        param: false
-    },
-    build: {
-        treeshake: true,
-        removeComment: false
-    }
-};
-```
-
-JS code:
 ```js
 const Manifest = require("@slimio/manifest");
 
-const manifest = new Manifest();
-manifest.create();
+const manifest = Manifest.create();
+const filePath = "/your/file/path.toml";
+
+Manifest.writeOnDisk(manifest, filePath);
 ```
 
-TOML file created :
-```toml
-name = "project"
-version = "1.0.0"
-project_type = "Addon"
+## API
 
-[dependencies]
-Events = "1.0.0"
-
-[psp]
-param = false
-
-[build]
-treeshake = true
-removeComment = false
-```
-> Default TOML file name: `slimio.toml`
-
-<br>
-</details>
-
-<details>
-    <summary>update(updateObj: object): Promise</summary>
-
-```js
-const manifest = new Manifest();
-manifest.create();
-manifest.update({ psp: undefined, build: undefined })
-```
-
-Output TOML file:
-```toml
-name = "project"
-version = "1.0.0"
-project_type = "Addon"
-
-[dependencies]
-Events = "1.0.0"
-```
-
-<br>
-</details>
-
-<details>
-    <summary>read(): string</summary>
-    
-File readed :
-```toml
-name = "project"
-version = "1.0.0"
-project_type = "Addon"
-
-[dependencies]
-Events = "1.0.0"
-```
-
-JS code:
-```js
-const manifest = new Manifest();
-const toml = manifest.read();
-console.log(toml);
-/* output
-{
-    name: "project",
-    version: "1.0.0",
-    project_type: "Addon",
-    dependencies: {
-        Event: "1.0.0"
-    }
+```ts
+interface DefaultConfig {
+    name: string;
+    version: string;
+    type: string;
+    dependencies?: object;
 }
-*/
 ```
 
+Default values:
+- name: `project`
+- version: `1.0.0`
+- type: `Addon`
+- dependecies: `{}` or `undefined`
+
+<details>
+    <summary>static create(obj?: DefaultConfig): Manifest</summary>
+
+Create Manifest object with a javascript object.
+
+```js
+const Manifest = require("@slimio/manifest");
+
+const manifest = Manifest.create();
+console.log(manifest.toJSON());
+```
+
+<br>
+</details>
+
+<details>
+    <summary>static writeOnDisk(manifest: Manifest, filePath?: string): void</summary>
+
+Write toml file if not exist.
+```js
+const Manifest = require("@slimio/manifest");
+
+const manifest = Manifest.create();
+const filePath = "/your/file/path.toml";
+
+Manifest.writeOnDisk(manifest, filePath);
+```
+> Default path : `process.cwd/slimio.toml`
+
+<br>
+</details>
+
+<details>
+    <summary>static read(filePath: string): Manifest</summary>
+    
+Read toml file and return a specific Manifest object.
+```js
+const Manifest = require("@slimio/manifest");
+const filePath = "/your/file/path.toml";
+
+const manifest Manifest.read(filePath);
+console.log(manifest.toJSON());
+```
+
+<br>
+</details>
+
+<details>
+    <summary>toJSON(): DefaultConfig</summary>
+    
+Return Manifest with private attributs as a JSON Object.
+```js
+const Manifest = require("@slimio/manifest");
+
+const manifest = Manifest.create();
+console.log(manifest.toJSON());
+```
 
 <br>
 </details>

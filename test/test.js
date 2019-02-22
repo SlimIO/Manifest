@@ -242,7 +242,7 @@ avaTest("writeOnDisk: file already exist", async(assert) => {
     await access(filePath);
 
     const manifest = Manifest.create();
-    Manifest.writeOnDisk(filePath, manifest);
+    Manifest.writeOnDisk(manifest, filePath);
 
     const manifestRead = Manifest.read(filePath);
     assert.is(manifestRead.name, "read test");
@@ -251,6 +251,7 @@ avaTest("writeOnDisk: file already exist", async(assert) => {
     assert.is(manifestRead.dependencies, undefined);
 });
 
+
 avaTest("writeOnDisk: file doesn't exist", async(assert) => {
     const filePath = join(__dirname, "slimioWriteOnDisk.toml");
     await assert.throwsAsync(async() => {
@@ -258,7 +259,7 @@ avaTest("writeOnDisk: file doesn't exist", async(assert) => {
     }, { instanceOf: Error, code: "ENOENT" });
 
     const manifest = Manifest.create();
-    Manifest.writeOnDisk(filePath, manifest);
+    Manifest.writeOnDisk(manifest, filePath);
     await access(filePath);
 
     const manifestRead = Manifest.read(filePath);
