@@ -8,7 +8,7 @@ declare class Manifest {
     // Properties
     readonly name: string;
     readonly version: string;
-    readonly projectType: String;
+    readonly type: String;
     readonly dependencies: Object;
 
     // Methods
@@ -22,7 +22,7 @@ declare namespace Manifest {
     interface DefaultConfig {
         name: string;
         version: string;
-        project_type: string;
+        type: string;
         dependencies: object;
     }
 }
