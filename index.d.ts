@@ -2,15 +2,19 @@
 
 declare class Manifest {
     // Constructor
-    constructor(filePath: string);
+    constructor(obj: Object);
 
     // Properties
-    public filePath: string;
+    readonly name: string;
+    readonly version: string;
+    readonly projectType: String;
+    readonly dependencies: Object;
 
     // Methods
-    public create(tomlObj: object): Promise;
-    public update(updateObj: object): Promise;
-    public read(): string;
+    static create(obj?: object): Manifest;
+    static read(filePath: string): Manifest;
+    static writeOnDisk(filePath: string, manifest: Manifest): void;
+    public toJSON(): Object;
 }
 
 export as namespace Manifest;
