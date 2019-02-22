@@ -19,6 +19,10 @@ function modifValidobj(obj) {
     return Object.assign({}, VALID_OBJ, obj);
 }
 
+avaTest("bypass", async(assert) => {
+    assert.pass();
+});
+
 // avaTest("private attribute", async(assert) => {
 //     const manifest = Manifest.create();
 //     const Mani = class Manifest {};
