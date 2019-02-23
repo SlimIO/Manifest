@@ -4,7 +4,9 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/is/commit-activity)
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-This package was created to manage manifest of SlimIO packages and addons. This API is Synchronous
+This package was created to manage manifest of SlimIO packages and addons.
+
+> ⚠️ Synchronous API
 
 ## Getting Started
 
@@ -47,7 +49,7 @@ declare namespace Manifest {
 ```
 
 <details>
-    <summary><b style="color:#4527A0">static</b> create(payload: Manifest.Payload, filePath?: string): Manifest</summary>
+    <summary><b>static</b> create(payload: Manifest.Payload, filePath?: string): Manifest</summary>
 
 Create a new manifest at given **filePath** (The default value is equal to **Manifest.DEFAULT_FILE**). The manifest file must not exist, else the method will throw an Error.
 
@@ -70,7 +72,7 @@ console.log(manifest.toJSON());
 </details>
 
 <details>
-    <summary><b style="color:#4527A0">static</b> writeOnDisk(manifest: Manifest, filePath?: string): void</summary>
+    <summary><b>static</b> writeOnDisk(manifest: Manifest, filePath?: string): void</summary>
 
 Write a Manifest Object on the disk.
 ```js
@@ -86,7 +88,7 @@ Manifest.writeOnDisk(manifest);
 </details>
 
 <details>
-    <summary><b style="color:#4527A0">static</b> open(filePath?: string): Manifest</summary>
+    <summary><b>static</b> open(filePath?: string): Manifest</summary>
 
 Read and parse local .toml manifest file. The method return a complete Manifest Object (it will throw if something is wrong). The default value for filePath will be **Manifest.DEFAULT_FILE**.
 ```js
@@ -116,8 +118,9 @@ console.log(JSON.stringify(manifest));
 ### Properties
 
 <details><summary>Manifest.DEFAULT_FILE</summary>
+<br />
 
-**DEFAULT_FILE** is a static property.
+**DEFAULT_FILE** is a static property of **Manifest**.
 ```js
 const { join } = require("path");
 
