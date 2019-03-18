@@ -9,6 +9,7 @@ declare class Manifest {
     readonly type: Manifest.Type;
     readonly dependencies: Manifest.Dependencies;
     public static DEFAULT_FILE: string;
+    public static TYPES: Readonly<Set<string>>
 
     // Methods
     static create(config?: Manifest.Payload, filePath?: string): Manifest;

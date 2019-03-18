@@ -36,6 +36,9 @@ function modifValidobj(obj) {
 
 avaTest("Check Manifest static properties", async(assert) => {
     assert.true(is.classObject(Manifest));
+    assert.false(Object.isExtensible(Manifest));
+    assert.true(is.set(Manifest.TYPES));
+    assert.true(Object.isFrozen(Manifest.TYPES));
     assert.true(is.string(Manifest.DEFAULT_FILE));
     assert.is(Manifest.DEFAULT_FILE, join(process.cwd(), "slimio.toml"));
 });

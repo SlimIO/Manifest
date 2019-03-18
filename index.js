@@ -212,6 +212,7 @@ class Manifest {
 }
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
+
 /** @type {Readonly<Set<String>>} */
 Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI"]));
 
