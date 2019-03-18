@@ -105,7 +105,7 @@ class Manifest {
 
     /**
      * @version 0.1.0
-     * @member {String} name
+     * @member {Object} dependencies
      * @memberof Manifest#
      */
     get dependencies() {
