@@ -17,12 +17,6 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  * @property {Object} dependencies Addon dependencies config
  */
 
-/**
- * @const Types
- * @type {Set<String>}
- */
-const Types = new Set(["Addon", "NAPI", "CLI"]);
-
 // Symbols
 const symName = Symbol("name");
 const symVer = Symbol("version");
@@ -60,8 +54,8 @@ class Manifest {
             throw new TypeError("payload.name must be a typeof <string>");
         }
         const validSemVer = assertVersion("payload.version", version);
-        if (!Types.has(type)) {
-            throw new TypeError(`payload.type must be one <string> of the Set : ${[...Types]}`);
+        if (!Manifest.TYPES.has(type)) {
+            throw new TypeError(`payload.type must be one <string> of the Set : ${[...Manifest.TYPES]}`);
         }
         if (!is.plainObject(dependencies)) {
             throw new TypeError("payload.dependencies must be a typeof <object>");
@@ -218,5 +212,9 @@ class Manifest {
 }
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
+/** @type {Readonly<Set<String>>} */
+Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI"]));
+
+Object.preventExtensions(Manifest);
 
 module.exports = Manifest;
