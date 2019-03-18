@@ -89,6 +89,16 @@ class Manifest {
     }
 
     /**
+     * @method hasDependency
+     * @memberof Manifest#
+     * @param {!String} name dependency name
+     * @returns {Boolean}
+     */
+    hasDependency(name) {
+        return Reflect.set(this[symDep], name);
+    }
+
+    /**
      * @version 0.1.0
      * @member {String} name
      * @memberof Manifest#

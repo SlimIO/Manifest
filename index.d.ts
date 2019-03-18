@@ -16,6 +16,7 @@ declare class Manifest {
     static open(filePath?: string): Manifest;
     static writeOnDisk(manifest: Manifest, filePath?: string): void;
     public addDependency(name: string, version: string): void;
+    public hasDependency(name: string): boolean;
     public toJSON(): Manifest.Payload;
 }
 
