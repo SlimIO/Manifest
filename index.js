@@ -1,11 +1,13 @@
 // Require Node Dependencies
 const { readFileSync, writeFileSync, existsSync } = require("fs");
-const { isAbsolute, join, extname } = require("path");
+const { join } = require("path");
 
 // Require Third-party Dependencies
 const TOML = require("@iarna/toml");
 const is = require("@slimio/is");
-const semver = require("semver");
+
+// Require Internal Dependencies
+const { assertFilePath, assertVersion } = require("./src/assert");
 
 /**
  * @typedef {Object} Payload
@@ -20,46 +22,6 @@ const semver = require("semver");
  * @type {Set<String>}
  */
 const Types = new Set(["Addon", "NAPI", "CLI"]);
-
-/**
- * @version 0.1.0
- * @function assertFilePath
- * @desc File path checker
- * @param {String} filePath File path
- *
- * @throws {TypeError|Error}
- * @returns {void}
- */
-function assertFilePath(filePath) {
-    if (!is.string(filePath)) {
-        throw new TypeError("filePath param must be a typeof <string>");
-    }
-    if (!isAbsolute(filePath)) {
-        throw new Error("filePath param must ba an absolute path");
-    }
-    if (extname(filePath) !== ".toml") {
-        throw new Error("extension file must be a .toml");
-    }
-}
-
-/**
- * @version 0.1.0
- * @function assertversion
- * @desc Sementic versionning checker
- * @param {String} paramName Param name checking
- * @param {String} value Sementic versionning value
- *
- * @throws {Error}
- * @return {String}
- */
-function assertversion(paramName, value) {
-    const validSemver = semver.valid(value);
-    if (is.nullOrUndefined(validSemver)) {
-        throw new Error(`${paramName} must be a valid semver`);
-    }
-
-    return validSemver;
-}
 
 // Symbols
 const symName = Symbol("name");
@@ -91,7 +53,7 @@ class Manifest {
         if (!is.string(payload.name)) {
             throw new TypeError("payload.name must be a typeof <string>");
         }
-        const validSemVer = assertversion("payload.version", version);
+        const validSemVer = assertVersion("payload.version", version);
         if (!Types.has(type)) {
             throw new TypeError(`payload.type must be one <string> of the Set : ${[...Types]}`);
         }
@@ -99,7 +61,7 @@ class Manifest {
             throw new TypeError("payload.dependencies must be a typeof <object>");
         }
         for (const [key, value] of Object.entries(dependencies)) {
-            assertversion(`payload.dependencies.${key}`, value);
+            assertVersion(`payload.dependencies.${key}`, value);
         }
 
         Reflect.defineProperty(this, symName, { value: name });
