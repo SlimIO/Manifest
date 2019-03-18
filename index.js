@@ -43,6 +43,12 @@ class Manifest {
      * @param {!Payload} payload Payload config
      *
      * @throws {TypeError}
+     * @example
+     * const manifest = new Manifest({
+     *     name: "my-project",
+     *     version: "1.0.0",
+     *     type: "NAPI"
+     * });
      */
     constructor(payload) {
         if (!is.plainObject(payload)) {
@@ -118,6 +124,14 @@ class Manifest {
      * @returns {Manifest}
      *
      * @throws {Error}
+     * @example
+     * const manifest = Manifest.create({
+     *     name: "my-project",
+     *     version: "1.0.0",
+     *     type: "NAPI"
+     * });
+     * console.log(manifest.dependencies);
+     * console.log(manifest.toJSON());
      */
     static create(config, filePath = Manifest.DEFAULT_FILE) {
         assertFilePath(filePath);
@@ -139,8 +153,12 @@ class Manifest {
      * @desc Open and read an existing manifest file (.toml). Return a Manifest Object.
      * @memberof Manifest#
      * @param {String} [filePath] File path
-     *
      * @returns {Manifest}
+     *
+     * @example
+     * const manifest = Manifest.open(); // Will open the local manifest
+     * console.log(manifest.name);
+     * console.log(manifest.version);
      */
     static open(filePath = Manifest.DEFAULT_FILE) {
         assertFilePath(filePath);
@@ -163,6 +181,10 @@ class Manifest {
      *
      * @throws {TypeError}
      * @throws {Error}
+     *
+     * @example
+     * const manifest = Manifest.open();
+     * Manifest.writeOnDisk(manifest);
      */
     static writeOnDisk(manifest, filePath = Manifest.DEFAULT_FILE) {
         if (!(manifest instanceof Manifest)) {
