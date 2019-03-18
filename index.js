@@ -53,21 +53,39 @@ class Manifest {
         if (!is.string(payload.name)) {
             throw new TypeError("payload.name must be a typeof <string>");
         }
-        const validSemVer = assertVersion("payload.version", version);
+        const validSemver = assertVersion("payload.version", version);
         if (!Manifest.TYPES.has(type)) {
             throw new TypeError(`payload.type must be one <string> of the Set : ${[...Manifest.TYPES]}`);
         }
         if (!is.plainObject(dependencies)) {
             throw new TypeError("payload.dependencies must be a typeof <object>");
         }
-        for (const [key, value] of Object.entries(dependencies)) {
-            assertVersion(`payload.dependencies.${key}`, value);
-        }
 
         Reflect.defineProperty(this, symName, { value: name });
-        Reflect.defineProperty(this, symVer, { value: validSemVer });
+        Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
-        Reflect.defineProperty(this, symDep, { value: dependencies });
+        Reflect.defineProperty(this, symDep, { value: Object.create(null) });
+        for (const [name, version] of Object.entries(dependencies)) {
+            this.addDependency(name, version);
+        }
+    }
+
+    /**
+     * @method addDependency
+     * @memberof Manifest#
+     * @param {!String} name dependency name
+     * @param {!String} version dependency version
+     * @returns {void}
+     *
+     * @throws {Error}
+     */
+    addDependency(name, version) {
+        if (this.type !== "Addon") {
+            throw new Error("Dependencies are only allowed on 'Addon' porjects");
+        }
+
+        assertVersion(`payload.dependencies.${name}`, version);
+        Reflect.set(this[symDep], name, version);
     }
 
     /**
