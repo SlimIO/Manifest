@@ -40,7 +40,7 @@ class Manifest {
     /**
      * @constructor
      * @memberof Manifest#
-     * @param {Payload} payload Payload config
+     * @param {!Payload} payload Payload config
      *
      * @throws {TypeError}
      */
@@ -111,9 +111,9 @@ class Manifest {
      *
      * @static
      * @method create
-     * @desc Create Manifest object with an object.
+     * @desc Create a new manifest file on the disk, return a Manifest Object.
      * @memberof Manifest#
-     * @param {Payload} config Config manifest
+     * @param {!Payload} config Config manifest
      * @param {String} [filePath] filePath
      * @returns {Manifest}
      *
@@ -136,7 +136,7 @@ class Manifest {
      *
      * @static
      * @method open
-     * @desc Read toml file and return a specific Manifest object.
+     * @desc Open and read an existing manifest file (.toml). Return a Manifest Object.
      * @memberof Manifest#
      * @param {String} [filePath] File path
      *
@@ -155,7 +155,7 @@ class Manifest {
      *
      * @static
      * @method writeOnDisk
-     * @desc Write toml file if not exist.
+     * @desc Write the manifest file (.toml) on the disk (the file must exist).
      * @memberof Manifest#
      * @param {!Manifest} manifest manifest
      * @param {String} [filePath] filePath
@@ -181,8 +181,8 @@ class Manifest {
      *
      * @public
      * @method toJSON
-     * @desc Return Manifest with private attributs as a JSON Object.
      * @memberof Manifest#
+     * @desc Transform Manifest Object to a valid JSON payload.
      * @returns {Payload}
      */
     toJSON() {
