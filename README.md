@@ -4,7 +4,7 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/is/commit-activity)
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
 
-This package was created to manage the manifest file of SlimIO packages and addons.
+This package was created to manage the [manifest file](https://en.wikipedia.org/wiki/Manifest_file) of SlimIO packages and addons. The manifest is useful to the CLI or any others tooling (psp etc..).
 
 > ⚠️ Synchronous API
 
