@@ -1,6 +1,6 @@
 {
     "name": "@slimio/manifest",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "This package was created to manage manifest for the SlimIO Project.",
     "main": "index.js",
     "scripts": {
