@@ -1,0 +1,8 @@
+name = "test"
+version = "0.1.0"
+type = "Addon"
+[dependencies]
+events = "1.0.0"
+
+[doc]
+include = ["v1.js", "v2.js"]

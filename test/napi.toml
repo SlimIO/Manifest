@@ -1,0 +1,4 @@
+name = "native-addon"
+version = "0.1.0"
+type = "NAPI"
+[dependencies]

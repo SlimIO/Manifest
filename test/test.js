@@ -49,7 +49,7 @@ avaTest("Manifest properties must be private", async(assert) => {
     });
 
     assert.is(Object.keys(manifest).length, 0);
-    assert.is(Reflect.ownKeys(manifest).length, 4);
+    assert.is(Reflect.ownKeys(manifest).length, 5);
     assert.is(manifest.name, "project");
     assert.is(manifest.version, "2.0.0");
     assert.is(manifest.type, "Addon");
@@ -197,4 +197,24 @@ avaTest("create and re-write on disk", async(assert) => {
     Manifest.writeOnDisk(manifest);
     await unlink(Manifest.DEFAULT_FILE);
     assert.pass();
+});
+
+avaTest("Adding dependency on NAPI/CLI must throw", (assert) => {
+    const man = Manifest.open(join(__dirname, "napi.toml"));
+    assert.is(man.type, "NAPI");
+    assert.throws(() => {
+        man.addDependency("events", "1.0.0");
+    }, { message: "Dependencies are only allowed on 'Addon' projects" });
+});
+
+avaTest("Local manifest should have events dep", (assert) => {
+    const man = Manifest.open(join(__dirname, "doc.toml"));
+    assert.true(man.hasDependency("events"));
+});
+
+avaTest("Retrieve documentation settings", (assert) => {
+    const man = Manifest.open(join(__dirname, "doc.toml"));
+    assert.deepEqual(man.doc, {
+        include: ["v1.js", "v2.js"]
+    });
 });

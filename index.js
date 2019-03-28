@@ -66,7 +66,7 @@ class Manifest {
         Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
         Reflect.defineProperty(this, symDep, { value: Object.create(null) });
-        Reflect.defineProperty(this, symDoc, { value: payload.doc || [] });
+        Reflect.defineProperty(this, symDoc, { value: payload.doc });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
         }
@@ -83,7 +83,7 @@ class Manifest {
      */
     addDependency(name, version) {
         if (this.type !== "Addon") {
-            throw new Error("Dependencies are only allowed on 'Addon' porjects");
+            throw new Error("Dependencies are only allowed on 'Addon' projects");
         }
 
         assertVersion(`payload.dependencies.${name}`, version);
