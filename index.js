@@ -22,6 +22,7 @@ const symName = Symbol("name");
 const symVer = Symbol("version");
 const symType = Symbol("type");
 const symDep = Symbol("dependencies");
+const symDoc = Symbol("doc");
 
 /**
  * @class Manifest
@@ -65,6 +66,7 @@ class Manifest {
         Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
         Reflect.defineProperty(this, symDep, { value: Object.create(null) });
+        Reflect.defineProperty(this, symDoc, { value: payload.doc || [] });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
         }
@@ -132,6 +134,15 @@ class Manifest {
      */
     get dependencies() {
         return this[symDep];
+    }
+
+    /**
+     * @version 0.2.0
+     * @member {Object} doc
+     * @memberof Manifest#
+     */
+    get doc() {
+        return this[symDoc];
     }
 
     /**

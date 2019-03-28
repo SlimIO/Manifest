@@ -2,3 +2,6 @@ name = "project"
 version = "0.1.0"
 type = "CLI"
 [dependencies]
+
+[doc]
+include = ["v1.js", "v2.js"]

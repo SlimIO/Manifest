@@ -6,6 +6,7 @@ declare class Manifest {
     readonly version: string;
     readonly type: Manifest.Type;
     readonly dependencies: Manifest.Dependencies;
+    readonly doc: Manifest.Documentation;
     public static DEFAULT_FILE: string;
     public static TYPES: Readonly<Set<string>>
 
@@ -21,6 +22,10 @@ declare class Manifest {
 declare namespace Manifest {
     type Type = "Addon" | "NAPI" | "CLI";
 
+    interface Documentation {
+        include: string[]
+    }
+
     interface Dependencies {
         [name: string]: string;
     }
@@ -30,6 +35,9 @@ declare namespace Manifest {
         version: string;
         type: Type;
         dependencies?: Dependencies;
+        doc?: {
+            include: string[]
+        }
     }
 }
 
