@@ -1,5 +1,3 @@
-/// <reference types="@types/node" />
-
 declare class Manifest {
     constructor(payload: Manifest.Payload);
 
