@@ -37,7 +37,8 @@ declare namespace Manifest {
         type: Type;
         dependencies?: Dependencies;
         doc?: {
-            include: string[]
+            include?: string[];
+            port?: number;
         }
     }
 }
