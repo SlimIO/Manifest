@@ -23,7 +23,8 @@ declare namespace Manifest {
     type Type = "Addon" | "NAPI" | "CLI" | "Package";
 
     interface Documentation {
-        include: string[]
+        include?: string[];
+        port?: number;
     }
 
     interface Dependencies {

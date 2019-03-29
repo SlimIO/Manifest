@@ -49,7 +49,9 @@ class Manifest {
         if (!is.plainObject(payload)) {
             throw new TypeError("payload param must be a typeof <object>");
         }
-        const { name, version, type, dependencies = Object.create(null) } = payload;
+        const {
+            name, version, type, dependencies = Object.create(null), doc = { include: [], port: 2000 }
+        } = payload;
 
         if (!is.string(payload.name)) {
             throw new TypeError("payload.name must be a typeof <string>");
@@ -66,7 +68,7 @@ class Manifest {
         Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
         Reflect.defineProperty(this, symDep, { value: Object.create(null) });
-        Reflect.defineProperty(this, symDoc, { value: payload.doc });
+        Reflect.defineProperty(this, symDoc, { value: doc });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
         }
