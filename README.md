@@ -6,7 +6,7 @@
 
 This package was created to manage the [manifest file](https://en.wikipedia.org/wiki/Manifest_file) of SlimIO packages and addons. The manifest is useful to the CLI or any others tooling (psp etc..).
 
-> ⚠️ Synchronous API
+> ⚠️ This package read and write with Synchronous Node.js API
 
 ## Getting Started
 
@@ -33,7 +33,12 @@ Following methods are members of **Manifest** class. Some types are described in
 
 ```ts
 declare namespace Manifest {
-    type Type = "Addon" | "NAPI" | "CLI";
+    type Type = "Addon" | "NAPI" | "CLI" | "Package";
+
+    interface Documentation {
+        include?: string[];
+        port?: number;
+    }
 
     interface Dependencies {
         [name: string]: string;
@@ -44,9 +49,15 @@ declare namespace Manifest {
         version: string;
         type: Type;
         dependencies?: Dependencies;
+        doc?: {
+            include?: string[];
+            port?: number;
+        }
     }
 }
 ```
+
+> ⚠️ Only "**Addon**" manifests can have dependencies.
 
 <details>
     <summary><b>static</b> create(payload: Manifest.Payload, filePath?: string): Manifest</summary>
