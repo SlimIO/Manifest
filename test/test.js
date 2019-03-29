@@ -8,7 +8,9 @@ const Manifest = require("../");
 const is = require("@slimio/is");
 const cloneDeep = require("lodash.clonedeep");
 
-const Types = new Set(["Addon", "NAPI", "CLI"]);
+Manifest.DEFAULT_FILE = join(process.cwd(), "default.toml");
+
+const Types = new Set(["Addon", "NAPI", "CLI", "Package"]);
 const VALID_OBJ = {
     name: "My project",
     version: "7.7.7",
@@ -40,7 +42,7 @@ avaTest("Check Manifest static properties", async(assert) => {
     assert.true(is.set(Manifest.TYPES));
     assert.true(Object.isFrozen(Manifest.TYPES));
     assert.true(is.string(Manifest.DEFAULT_FILE));
-    assert.is(Manifest.DEFAULT_FILE, join(process.cwd(), "slimio.toml"));
+    assert.is(Manifest.DEFAULT_FILE, join(process.cwd(), "default.toml"));
 });
 
 avaTest("Manifest properties must be private", async(assert) => {
