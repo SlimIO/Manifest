@@ -126,6 +126,20 @@ console.log(JSON.stringify(manifest));
 <br />
 </details>
 
+### Getters
+
+The Manifest Object is mostly composed of getters:
+
+```ts
+class Manifest {
+    readonly name: string;
+    readonly version: string;
+    readonly type: Manifest.Type;
+    readonly dependencies: Manifest.Dependencies;
+    readonly doc: Manifest.Documentation;
+}
+```
+
 ### Properties
 
 <details><summary>Manifest.DEFAULT_FILE</summary>
