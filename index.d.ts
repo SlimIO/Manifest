@@ -20,7 +20,7 @@ declare class Manifest {
 }
 
 declare namespace Manifest {
-    type Type = "Addon" | "NAPI" | "CLI";
+    type Type = "Addon" | "NAPI" | "CLI" | "Package";
 
     interface Documentation {
         include: string[]
