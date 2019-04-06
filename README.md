@@ -8,6 +8,9 @@ This package was created to manage the [manifest file](https://en.wikipedia.org/
 
 > ⚠️ This package read and write with Synchronous Node.js API
 
+## Requirements
+- Node.js v10 or higher
+
 ## Getting Started
 
 This package is available in the Node Package Repository and can be easily installed with [npm](https://docs.npmjs.com/getting-started/what-is-npm) or [yarn](https://yarnpkg.com).
@@ -155,5 +158,5 @@ Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
 <br />
 </details>
 
-# License
+## License
 MIT

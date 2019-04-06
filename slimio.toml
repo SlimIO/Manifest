@@ -1,6 +1,7 @@
-name = "My project"
-version = "7.7.7"
-type = "Addon"
-
+name = "Manifest"
+version = "0.2.1"
+type = "Package"
 [dependencies]
-Event = "1.1.1"
+
+[doc]
+include=['index.js']
