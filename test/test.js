@@ -10,7 +10,7 @@ const cloneDeep = require("lodash.clonedeep");
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "default.toml");
 
-const Types = new Set(["Addon", "NAPI", "CLI", "Package"]);
+const Types = new Set(["Addon", "NAPI", "CLI", "Package", "Service"]);
 const VALID_OBJ = {
     name: "My project",
     version: "7.7.7",
