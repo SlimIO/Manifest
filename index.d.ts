@@ -13,7 +13,7 @@ declare class Manifest {
     public static DEFAULT_DOC_PORT: number;
 
     // Methods
-    static create(config?: Manifest.Payload, filePath?: string): Manifest;
+    static create(config?: Manifest.Payload, filePath?: string, lightMode?: boolean): Manifest;
     static open(filePath?: string): Manifest;
     static writeOnDisk(manifest: Manifest, filePath?: string): void;
     public addDependency(name: string, version: string): void;

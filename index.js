@@ -218,6 +218,7 @@ class Manifest {
      * @memberof Manifest
      * @param {!Payload} config Config manifest
      * @param {String} [filePath] filePath
+     * @param {Boolean} [lightMode=false] activate light mode
      * @returns {Manifest}
      *
      * @throws {Error}
@@ -230,14 +231,15 @@ class Manifest {
      * console.log(manifest.dependencies);
      * console.log(manifest.toJSON());
      */
-    static create(config, filePath = Manifest.DEFAULT_FILE) {
+    static create(config, filePath = Manifest.DEFAULT_FILE, lightMode = false) {
         assertFilePath(filePath);
         if (existsSync(filePath)) {
             throw new Error(`Can't create new manifest at ${filePath}!`);
         }
 
         const manifest = new Manifest(config);
-        writeFileSync(filePath, TOML.stringify(manifest.toJSON()));
+        const json = lightMode ? { name: manifest.name, version: manifest.version, type: manifest.type } : manifest.toJSON();
+        writeFileSync(filePath, TOML.stringify(json));
 
         return manifest;
     }
