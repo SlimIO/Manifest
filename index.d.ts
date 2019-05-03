@@ -7,6 +7,7 @@ declare class Manifest {
     readonly type: Manifest.Type;
     readonly dependencies: Manifest.Dependencies;
     readonly doc: Manifest.Documentation;
+    readonly psp: Manifest.psp;
     public static DEFAULT_FILE: string;
     public static TYPES: Readonly<Set<string>>
     public static DEFAULT_DOC_PORT: number;
@@ -23,9 +24,14 @@ declare class Manifest {
 declare namespace Manifest {
     type Type = "Addon" | "NAPI" | "CLI" | "Package";
 
+    interface psp {
+        npmrc: boolean;
+        jsdoc: boolean;
+    }
+
     interface Documentation {
-        include?: string[];
-        port?: number;
+        include: string[];
+        port: number;
     }
 
     interface Dependencies {

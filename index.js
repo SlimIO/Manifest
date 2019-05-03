@@ -5,6 +5,7 @@ const { join, extname } = require("path");
 // Require Third-party Dependencies
 const TOML = require("@iarna/toml");
 const is = require("@slimio/is");
+const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
 const { assertFilePath, assertVersion } = require("./src/assert");
@@ -16,12 +17,19 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  */
 
 /**
+ * @typedef {Object} psp
+ * @property {Boolean} npmrc
+ * @property {Boolean} jsdoc
+ */
+
+/**
  * @typedef {Object} Payload
  * @property {String} name Name config
  * @property {String} version Version config
  * @property {String} type Type project config
  * @property {Object} dependencies Addon dependencies config
  * @property {Doc} doc
+ * @property {psp} psp
  */
 
 // Symbols
@@ -30,6 +38,7 @@ const symVer = Symbol("version");
 const symType = Symbol("type");
 const symDep = Symbol("dependencies");
 const symDoc = Symbol("doc");
+const symPsp = Symbol("psp");
 
 /**
  * @class Manifest
@@ -56,15 +65,21 @@ class Manifest {
         if (!is.plainObject(payload)) {
             throw new TypeError("payload param must be a typeof <object>");
         }
+
         const {
             name, version, type,
             dependencies = Object.create(null),
-            doc = { include: [], port: Manifest.DEFAULT_DOC_PORT }
+            doc = { include: [], port: Manifest.DEFAULT_DOC_PORT },
+            psp = Object.create(null)
         } = payload;
         if (!is.plainObject(doc)) {
             throw new TypeError("payload.doc must be a plainObject");
         }
+        if (!is.plainObject(psp)) {
+            throw new TypeError("payload.psp must be a plainObject");
+        }
         const { port = Manifest.DEFAULT_DOC_PORT } = doc;
+        const { jsdoc = true, npmrc = true } = psp;
 
         if (!is.string(payload.name)) {
             throw new TypeError("payload.name must be a typeof <string>");
@@ -85,6 +100,14 @@ class Manifest {
             throw new TypeError("doc.port must be a number");
         }
 
+        // Check psp field
+        if (!is.bool(npmrc)) {
+            throw new TypeError("psp.npmrc must be a boolean");
+        }
+        if (!is.bool(jsdoc)) {
+            throw new TypeError("psp.jsdoc must be a boolean");
+        }
+
         // Note: doc.include must contain string with a '.js' extension
         const include = doc.include.filter((file) => typeof file === "string" && extname(file) === ".js");
 
@@ -95,6 +118,7 @@ class Manifest {
             value: Object.create(null)
         });
         Reflect.defineProperty(this, symDoc, { value: { port, include } });
+        Reflect.defineProperty(this, symPsp, { value: { jsdoc, npmrc } });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
         }
@@ -164,7 +188,7 @@ class Manifest {
      * @memberof Manifest
      */
     get dependencies() {
-        return this[symDep];
+        return cloneDeep(this[symDep]);
     }
 
     /**
@@ -173,7 +197,16 @@ class Manifest {
      * @memberof Manifest
      */
     get doc() {
-        return this[symDoc];
+        return cloneDeep(this[symDoc]);
+    }
+
+    /**
+     * @version 0.3.0
+     * @member {psp} psp
+     * @memberof Manifest
+     */
+    get psp() {
+        return cloneDeep(this[symPsp]);
     }
 
     /**
@@ -276,7 +309,9 @@ class Manifest {
             name: this.name,
             version: this.version,
             type: this.type,
-            dependencies: this.dependencies
+            dependencies: this.dependencies,
+            doc: this.doc,
+            psp: this.psp
         };
 
         return ret;
