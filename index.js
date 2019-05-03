@@ -10,11 +10,18 @@ const is = require("@slimio/is");
 const { assertFilePath, assertVersion } = require("./src/assert");
 
 /**
+ * @typedef {Object} Doc
+ * @property {String[]} include
+ * @property {Number} port
+ */
+
+/**
  * @typedef {Object} Payload
  * @property {String} name Name config
  * @property {String} version Version config
  * @property {String} type Type project config
  * @property {Object} dependencies Addon dependencies config
+ * @property {Doc} doc
  */
 
 // Symbols
@@ -50,7 +57,9 @@ class Manifest {
             throw new TypeError("payload param must be a typeof <object>");
         }
         const {
-            name, version, type, dependencies = Object.create(null), doc = { include: [], port: 2000 }
+            name, version, type,
+            dependencies = Object.create(null),
+            doc = { include: [], port: 2000 }
         } = payload;
 
         if (!is.string(payload.name)) {
@@ -243,12 +252,16 @@ class Manifest {
      * @returns {Payload}
      */
     toJSON() {
-        return {
+        const ret = {
             name: this.name,
             version: this.version,
-            type: this.type,
-            dependencies: this.dependencies
+            type: this.type
         };
+        if (Object.keys(this.dependencies) > 0) {
+            Reflect.set(ret, "dependencies", this.dependencies);
+        }
+
+        return ret;
     }
 }
 
