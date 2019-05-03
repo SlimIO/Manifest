@@ -218,6 +218,7 @@ avaTest("Local manifest should have events dep", (assert) => {
 avaTest("Retrieve documentation settings", (assert) => {
     const man = Manifest.open(join(__dirname, "doc.toml"));
     assert.deepEqual(man.doc, {
-        include: ["v1.js", "v2.js"]
+        include: ["v1.js", "v2.js"],
+        port: Manifest.DEFAULT_DOC_PORT
     });
 });

@@ -9,6 +9,7 @@ declare class Manifest {
     readonly doc: Manifest.Documentation;
     public static DEFAULT_FILE: string;
     public static TYPES: Readonly<Set<string>>
+    public static DEFAULT_DOC_PORT: number;
 
     // Methods
     static create(config?: Manifest.Payload, filePath?: string): Manifest;

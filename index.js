@@ -1,6 +1,6 @@
 // Require Node Dependencies
 const { readFileSync, writeFileSync, existsSync } = require("fs");
-const { join } = require("path");
+const { join, extname } = require("path");
 
 // Require Third-party Dependencies
 const TOML = require("@iarna/toml");
@@ -59,8 +59,12 @@ class Manifest {
         const {
             name, version, type,
             dependencies = Object.create(null),
-            doc = { include: [], port: 2000 }
+            doc = { include: [], port: Manifest.DEFAULT_DOC_PORT }
         } = payload;
+        if (!is.plainObject(doc)) {
+            throw new TypeError("payload.doc must be a plainObject");
+        }
+        const { port = Manifest.DEFAULT_DOC_PORT } = doc;
 
         if (!is.string(payload.name)) {
             throw new TypeError("payload.name must be a typeof <string>");
@@ -73,13 +77,24 @@ class Manifest {
             throw new TypeError("payload.dependencies must be a typeof <object>");
         }
 
+        // Check Doc field
+        if (!Array.isArray(doc.include)) {
+            throw new TypeError("doc.include must be instanceof Array");
+        }
+        if (!is.number(port)) {
+            throw new TypeError("doc.port must be a number");
+        }
+
+        // Note: doc.include must contain string with a '.js' extension
+        const include = doc.include.filter((file) => typeof file === "string" && extname(file) === ".js");
+
         Reflect.defineProperty(this, symName, { value: name });
         Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
         Reflect.defineProperty(this, symDep, {
             value: Object.create(null)
         });
-        Reflect.defineProperty(this, symDoc, { value: doc });
+        Reflect.defineProperty(this, symDoc, { value: { port, include } });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
         }
@@ -154,7 +169,7 @@ class Manifest {
 
     /**
      * @version 0.2.0
-     * @member {Object} doc
+     * @member {Doc} doc
      * @memberof Manifest
      */
     get doc() {
@@ -269,6 +284,7 @@ class Manifest {
 }
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
+Manifest.DEFAULT_DOC_PORT = 2000;
 
 /** @type {Readonly<Set<String>>} */
 Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI", "Package", "Service"]));
