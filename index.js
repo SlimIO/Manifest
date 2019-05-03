@@ -76,7 +76,9 @@ class Manifest {
         Reflect.defineProperty(this, symName, { value: name });
         Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
-        Reflect.defineProperty(this, symDep, { value: Object.create(null) });
+        Reflect.defineProperty(this, symDep, {
+            value: Object.create(null)
+        });
         Reflect.defineProperty(this, symDoc, { value: doc });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
@@ -98,7 +100,10 @@ class Manifest {
         }
 
         assertVersion(`payload.dependencies.${name}`, version);
-        Reflect.set(this[symDep], name, version);
+        const isWrited = Reflect.set(this[symDep], name, version);
+        if (!isWrited) {
+            throw new Error(`Unable to write dependency '${name}' version '${version}'`);
+        }
     }
 
     /**
@@ -108,7 +113,7 @@ class Manifest {
      * @returns {Boolean}
      */
     hasDependency(name) {
-        return Reflect.set(this[symDep], name);
+        return Reflect.has(this[symDep], name);
     }
 
     /**
@@ -255,11 +260,9 @@ class Manifest {
         const ret = {
             name: this.name,
             version: this.version,
-            type: this.type
+            type: this.type,
+            dependencies: this.dependencies
         };
-        if (Object.keys(this.dependencies) > 0) {
-            Reflect.set(ret, "dependencies", this.dependencies);
-        }
 
         return ret;
     }

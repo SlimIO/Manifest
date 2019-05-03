@@ -194,7 +194,8 @@ avaTest("create and re-write on disk", async(assert) => {
     await access(Manifest.DEFAULT_FILE);
 
     const iManifest = Manifest.open();
-    assert.deepEqual(iManifest.toJSON(), VALID_OBJ);
+    const json = iManifest.toJSON();
+    assert.deepEqual(json, VALID_OBJ);
 
     Manifest.writeOnDisk(manifest);
     await unlink(Manifest.DEFAULT_FILE);
