@@ -1,5 +1,5 @@
 // Require Node.js Dependencies
-const { promises: { unlink, access }, existsSync } = require("fs");
+const { promises: { unlink, access, readFile }, existsSync } = require("fs");
 const { join } = require("path");
 
 // Require Third-party Dependencies
@@ -7,6 +7,7 @@ const avaTest = require("ava");
 const Manifest = require("../");
 const is = require("@slimio/is");
 const cloneDeep = require("lodash.clonedeep");
+const toml = require("@iarna/toml");
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "default.toml");
 
@@ -179,6 +180,20 @@ avaTest("open: slimio.toml (with absolute path)", (assert) => {
     assert.is(manifest.version, "0.1.0");
     assert.is(manifest.type, "CLI");
     assert.deepEqual(manifest.dependencies, {});
+});
+
+avaTest("create: light mode", async(assert) => {
+    const filePath = join(__dirname, "light.toml");
+    const options = {
+        name: "project", version: "1.0.0", type: "Addon"
+    };
+    Manifest.create(options, filePath, true);
+    await access(filePath);
+
+    const buf = await readFile(filePath);
+    const json = toml.parse(buf.toString());
+    assert.deepEqual(json, options);
+    await unlink(filePath);
 });
 
 avaTest("create: default", async(assert) => {
