@@ -22,8 +22,15 @@ $ yarn add @slimio/manifest
 ```
 
 ## Usage example
-Open local manifest.
+Open local manifest. The default manifest name is `slimio.toml` !
 
+```toml
+name = "yourProject"
+version = "1.0.0"
+type = "Package"
+```
+
+Then, use the package manifest to open the manifest (located in the current working dir).
 ```js
 const Manifest = require("@slimio/manifest");
 
