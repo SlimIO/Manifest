@@ -78,7 +78,7 @@ class Manifest {
         if (!is.plainObject(psp)) {
             throw new TypeError("payload.psp must be a plainObject");
         }
-        const { port = Manifest.DEFAULT_DOC_PORT } = doc;
+        const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
         const { jsdoc = true, npmrc = true } = psp;
 
         if (!is.string(payload.name)) {
@@ -93,7 +93,7 @@ class Manifest {
         }
 
         // Check Doc field
-        if (!Array.isArray(doc.include)) {
+        if (!Array.isArray(include)) {
             throw new TypeError("doc.include must be instanceof Array");
         }
         if (!is.number(port)) {
@@ -109,7 +109,7 @@ class Manifest {
         }
 
         // Note: doc.include must contain string with a '.js' extension
-        const include = doc.include.filter((file) => typeof file === "string" && extname(file) === ".js");
+        const includeFinal = include.filter((file) => typeof file === "string" && extname(file) === ".js");
 
         Reflect.defineProperty(this, symName, { value: name });
         Reflect.defineProperty(this, symVer, { value: validSemver });
@@ -117,7 +117,7 @@ class Manifest {
         Reflect.defineProperty(this, symDep, {
             value: Object.create(null)
         });
-        Reflect.defineProperty(this, symDoc, { value: { port, include } });
+        Reflect.defineProperty(this, symDoc, { value: { port, include: includeFinal } });
         Reflect.defineProperty(this, symPsp, { value: { jsdoc, npmrc } });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
