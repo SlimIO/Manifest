@@ -3,6 +3,9 @@
 ![Version](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/SlimIO/Manifest/master/package.json?token=Aeue0OHXB6Ozx8agcA1fkbEC6bCdL6epks5cearKwA%3D%3D&query=$.version&label=Version)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/is/commit-activity)
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
+![dep](https://img.shields.io/david/SlimIO/Manifest.svg)
+![size](https://img.shields.io/bundlephobia/min/@slimio/manifest.svg)
+[![Known Vulnerabilities](https://snyk.io/test/github/SlimIO/Manifest/badge.svg?targetFile=package.json)](https://snyk.io/test/github/SlimIO/Manifest?targetFile=package.json)
 
 This package was created to manage the [manifest file](https://en.wikipedia.org/wiki/Manifest_file) of SlimIO packages and addons. The manifest is useful to the CLI or any others tooling (psp etc..).
 
