@@ -45,9 +45,14 @@ Following methods are members of **Manifest** class. Some types are described in
 declare namespace Manifest {
     type Type = "Addon" | "NAPI" | "CLI" | "Package";
 
+    interface psp {
+        npmrc: boolean;
+        jsdoc: boolean;
+    }
+
     interface Documentation {
-        include?: string[];
-        port?: number;
+        include: string[];
+        port: number;
     }
 
     interface Dependencies {
@@ -147,20 +152,41 @@ class Manifest {
     readonly type: Manifest.Type;
     readonly dependencies: Manifest.Dependencies;
     readonly doc: Manifest.Documentation;
+    readonly psp: Manifest.psp;
 }
 ```
 
 ### Properties
 
+following properties are static.
+
 <details><summary>Manifest.DEFAULT_FILE</summary>
 <br />
 
-**DEFAULT_FILE** is a static property of **Manifest**.
 ```js
 const { join } = require("path");
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
 ```
+
+<br />
+</details>
+
+<details><summary>Manifest.TYPES</summary>
+<br />
+
+Readonly Sets of available string types.
+```js
+Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI", "Package", "Service"]));
+```
+
+<br />
+</details>
+
+<details><summary>Manifest.DEFAULT_DOC_PORT</summary>
+<br />
+
+Default documentation port (equal to **2000** by default).
 
 <br />
 </details>
