@@ -191,5 +191,15 @@ Default documentation port (equal to **2000** by default).
 <br />
 </details>
 
+## Dependencies
+This project is covered by the SlimIO security policy and undergoes regular security audits.
+
+| Name | Refactoring | Security Risk | Usage |
+| --- | --- | --- | --- |
+| [@slimio/is](https://github.com/SlimIO/is#readme) | Minor | Low | Type checker |
+| [lodash.clonedeep](https://lodash.com/) | Minor | Low | Clone deep Objects |
+| [semver](https://lodash.com/) | Major | Low | Assert manifest version as SemVer |
+| [@iarna/toml](https://lodash.com/) | Major | Medium | Parse TOML, Stringify JSON into TOML |
+
 ## License
 MIT
