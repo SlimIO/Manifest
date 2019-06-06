@@ -4,7 +4,6 @@ const { join, extname } = require("path");
 
 // Require Third-party Dependencies
 const TOML = require("@iarna/toml");
-const is = require("@slimio/is");
 const ow = require("ow");
 const cloneDeep = require("lodash.clonedeep");
 
