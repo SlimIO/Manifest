@@ -8,6 +8,7 @@ declare class Manifest {
     readonly dependencies: Manifest.Dependencies;
     readonly doc: Manifest.Documentation;
     readonly psp: Manifest.psp;
+    readonly org: string | null;
     public static DEFAULT_FILE: string;
     public static TYPES: Readonly<Set<string>>
     public static DEFAULT_DOC_PORT: number;
@@ -42,6 +43,7 @@ declare namespace Manifest {
         name: string;
         version: string;
         type: Type;
+        org?: string;
         dependencies?: Dependencies;
         doc?: {
             include?: string[];

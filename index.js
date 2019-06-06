@@ -27,6 +27,7 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  * @property {String} name Name config
  * @property {String} version Version config
  * @property {String} type Type project config
+ * @property {String} org Organization name
  * @property {Object} dependencies Addon dependencies config
  * @property {Doc} doc
  * @property {psp} psp
@@ -39,6 +40,7 @@ const symType = Symbol("type");
 const symDep = Symbol("dependencies");
 const symDoc = Symbol("doc");
 const symPsp = Symbol("psp");
+const symOrg = Symbol("org");
 
 /**
  * @class Manifest
@@ -64,10 +66,11 @@ class Manifest {
     constructor(payload) {
         ow(payload, ow.object);
 
-        const { name, version, type, dependencies, doc, psp } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
+        const { name, version, type, org, dependencies, doc, psp } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
         ow(name, ow.string);
         ow(doc, ow.object);
         ow(psp, ow.object);
+        ow(org, ow.optional.string);
 
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
         const { jsdoc = true, npmrc = true } = psp;
@@ -88,6 +91,7 @@ class Manifest {
         Reflect.defineProperty(this, symName, { value: name });
         Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
+        Reflect.defineProperty(this, symOrg, { value: org || null });
         Reflect.defineProperty(this, symDep, {
             value: Object.create(null)
         });
@@ -145,6 +149,15 @@ class Manifest {
      */
     get version() {
         return this[symVer];
+    }
+
+    /**
+     * @version 0.4.0
+     * @member {String} org
+     * @memberof Manifest
+     */
+    get org() {
+        return this[symOrg];
     }
 
     /**
@@ -285,6 +298,7 @@ class Manifest {
             name: this.name,
             version: this.version,
             type: this.type,
+            org: this.org,
             dependencies: this.dependencies,
             doc: this.doc,
             psp: this.psp

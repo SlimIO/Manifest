@@ -157,6 +157,7 @@ class Manifest {
     readonly dependencies: Manifest.Dependencies;
     readonly doc: Manifest.Documentation;
     readonly psp: Manifest.psp;
+    readonly org: string;
 }
 ```
 
