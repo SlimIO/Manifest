@@ -86,52 +86,6 @@ avaTest("manifest toJSON()", (assert) => {
     assert.deepEqual(payload, manifest.toJSON());
 });
 
-avaTest("constructor: payload doc and psp must be objects", (assert) => {
-    assert.throws(() => {
-        new Manifest({ doc: 10 });
-    }, { instanceOf: TypeError, message: "payload.doc must be a plainObject" });
-
-    assert.throws(() => {
-        new Manifest({ doc: {}, psp: 10 });
-    }, { instanceOf: TypeError, message: "payload.psp must be a plainObject" });
-});
-
-avaTest("constructor: assert payload doc", (assert) => {
-    assert.throws(() => {
-        new Manifest(modifValidobj({ doc: { include: 10 } }));
-    }, { instanceOf: TypeError, message: "doc.include must be instanceof Array" });
-
-    assert.throws(() => {
-        new Manifest(modifValidobj({ doc: { port: "5000" } }));
-    }, { instanceOf: TypeError, message: "doc.port must be a number" });
-});
-
-avaTest("constructor: assert payload psp", (assert) => {
-    assert.throws(() => {
-        new Manifest(modifValidobj({ psp: { npmrc: 1 } }));
-    }, { instanceOf: TypeError, message: "psp.npmrc must be a boolean" });
-
-    assert.throws(() => {
-        new Manifest(modifValidobj({ psp: { jsdoc: 1 } }));
-    }, { instanceOf: TypeError, message: "psp.jsdoc must be a boolean" });
-});
-
-avaTest("constructor: payload param must be a typeof <object>", (assert) => {
-    assert.throws(() => {
-        new Manifest(null);
-    }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
-
-    assert.throws(() => {
-        new Manifest([]);
-    }, { instanceOf: TypeError, message: "payload param must be a typeof <object>" });
-});
-
-avaTest("constructor: payload.name must be a typeof <string>", (assert) => {
-    assert.throws(() => {
-        new Manifest(modifValidobj({ name: 10 }));
-    }, { instanceOf: TypeError, message: "payload.name must be a typeof <string>" });
-});
-
 avaTest("constructor: payload.version must be a valid semver", (assert) => {
     assert.throws(() => {
         new Manifest(modifValidobj({ version: 10 }));
@@ -142,12 +96,6 @@ avaTest(`constructor: payload.type must be one <string> of the Set : ${[...Types
     assert.throws(() => {
         new Manifest(modifValidobj({ type: 10 }));
     }, { instanceOf: TypeError, message: `payload.type must be one <string> of the Set : ${[...Types]}` });
-});
-
-avaTest("constructor: payload.dependencies must be a typeof <object>", (assert) => {
-    assert.throws(() => {
-        new Manifest(modifValidobj({ dependencies: 10 }));
-    }, { instanceOf: TypeError, message: "payload.dependencies must be a typeof <object>" });
 });
 
 avaTest("constructor: payload.dependencies.key must be a valid semver", (assert) => {

@@ -5,6 +5,7 @@ const { join, extname } = require("path");
 // Require Third-party Dependencies
 const TOML = require("@iarna/toml");
 const is = require("@slimio/is");
+const ow = require("ow");
 const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
@@ -62,51 +63,25 @@ class Manifest {
      * });
      */
     constructor(payload) {
-        if (!is.plainObject(payload)) {
-            throw new TypeError("payload param must be a typeof <object>");
-        }
+        ow(payload, ow.object);
 
-        const {
-            name, version, type,
-            dependencies = Object.create(null),
-            doc = { include: [], port: Manifest.DEFAULT_DOC_PORT },
-            psp = Object.create(null)
-        } = payload;
-        if (!is.plainObject(doc)) {
-            throw new TypeError("payload.doc must be a plainObject");
-        }
-        if (!is.plainObject(psp)) {
-            throw new TypeError("payload.psp must be a plainObject");
-        }
+        const { name, version, type, dependencies, doc, psp } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
+        ow(name, ow.string);
+        ow(doc, ow.object);
+        ow(psp, ow.object);
+
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
         const { jsdoc = true, npmrc = true } = psp;
 
-        if (!is.string(payload.name)) {
-            throw new TypeError("payload.name must be a typeof <string>");
-        }
         const validSemver = assertVersion("payload.version", version);
         if (!Manifest.TYPES.has(type)) {
             throw new TypeError(`payload.type must be one <string> of the Set : ${[...Manifest.TYPES]}`);
         }
-        if (!is.plainObject(dependencies)) {
-            throw new TypeError("payload.dependencies must be a typeof <object>");
-        }
-
-        // Check Doc field
-        if (!Array.isArray(include)) {
-            throw new TypeError("doc.include must be instanceof Array");
-        }
-        if (!is.number(port)) {
-            throw new TypeError("doc.port must be a number");
-        }
-
-        // Check psp field
-        if (!is.bool(npmrc)) {
-            throw new TypeError("psp.npmrc must be a boolean");
-        }
-        if (!is.bool(jsdoc)) {
-            throw new TypeError("psp.jsdoc must be a boolean");
-        }
+        ow(dependencies, ow.object);
+        ow(include, ow.array);
+        ow(port, ow.number);
+        ow(npmrc, ow.boolean);
+        ow(jsdoc, ow.boolean);
 
         // Note: doc.include must contain string with a '.js' extension
         const includeFinal = include.filter((file) => typeof file === "string" && extname(file) === ".js");
@@ -322,6 +297,11 @@ class Manifest {
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
 Manifest.DEFAULT_DOC_PORT = 2000;
+Manifest.DEFAULT_OPTIONS = {
+    dependencies: Object.create(null),
+    doc: { include: [], port: Manifest.DEFAULT_DOC_PORT },
+    psp: Object.create(null)
+};
 
 /** @type {Readonly<Set<String>>} */
 Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI", "Package", "Service"]));
