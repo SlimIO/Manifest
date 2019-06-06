@@ -70,7 +70,7 @@ class Manifest {
         ow(name, ow.string);
         ow(doc, ow.object);
         ow(psp, ow.object);
-        ow(org, ow.optional.string);
+        ow(org, ow.any(ow.string, ow.null, ow.undefined));
 
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
         const { jsdoc = true, npmrc = true } = psp;
