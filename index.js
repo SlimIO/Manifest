@@ -28,6 +28,7 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  * @property {String} version Version config
  * @property {String} type Type project config
  * @property {String} org Organization name
+ * @property {String} platform platform
  * @property {Object} dependencies Addon dependencies config
  * @property {Doc} doc
  * @property {psp} psp
@@ -41,12 +42,15 @@ const symDep = Symbol("dependencies");
 const symDoc = Symbol("doc");
 const symPsp = Symbol("psp");
 const symOrg = Symbol("org");
+const symPlatform = Symbol("platform");
 
 /**
  * @class Manifest
  * @property {String} name Name config
  * @property {String} version Version config
  * @property {String} type Type project config
+ * @property {String|null} org organization name
+ * @property {String} platform specific platform
  * @property {Object} dependencies Addon dependencies config
  */
 class Manifest {
@@ -66,10 +70,13 @@ class Manifest {
     constructor(payload) {
         ow(payload, ow.object);
 
-        const { name, version, type, org, dependencies, doc, psp } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
+        const {
+            name, version, type, org, dependencies, doc, psp, platform = "Any"
+        } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
         ow(name, ow.string);
         ow(doc, ow.object);
         ow(psp, ow.object);
+        ow(platform, ow.string);
         ow(org, ow.any(ow.string, ow.null, ow.undefined));
 
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
@@ -91,6 +98,7 @@ class Manifest {
         Reflect.defineProperty(this, symName, { value: name });
         Reflect.defineProperty(this, symVer, { value: validSemver });
         Reflect.defineProperty(this, symType, { value: type });
+        Reflect.defineProperty(this, symPlatform, { value: platform });
         Reflect.defineProperty(this, symOrg, { value: org || null });
         Reflect.defineProperty(this, symDep, {
             value: Object.create(null)
@@ -167,6 +175,15 @@ class Manifest {
      */
     get type() {
         return this[symType];
+    }
+
+    /**
+     * @version 0.1.0
+     * @member {String} platform
+     * @memberof Manifest
+     */
+    get platform() {
+        return this[symPlatform];
     }
 
     /**
@@ -300,6 +317,7 @@ class Manifest {
             type: this.type,
             org: this.org,
             dependencies: this.dependencies,
+            platform: this.platform,
             doc: this.doc,
             psp: this.psp
         };

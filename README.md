@@ -48,6 +48,7 @@ Following methods are members of **Manifest** class. Some types are described in
 ```ts
 declare namespace Manifest {
     type Type = "Addon" | "NAPI" | "CLI" | "Package";
+    type Platform = "Any" | "Windows" | "Unix";
 
     interface psp {
         npmrc: boolean;
@@ -68,6 +69,7 @@ declare namespace Manifest {
         version: string;
         type: Type;
         dependencies?: Dependencies;
+        platform?: Platform;
         doc?: {
             include?: string[];
             port?: number;
@@ -157,6 +159,7 @@ class Manifest {
     readonly dependencies: Manifest.Dependencies;
     readonly doc: Manifest.Documentation;
     readonly psp: Manifest.psp;
+    readonly platform: Manifest.platform;
     readonly org: string;
 }
 ```

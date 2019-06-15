@@ -17,6 +17,7 @@ const VALID_OBJ = {
     version: "7.7.7",
     type: "Addon",
     org: null,
+    platform: "Any",
     doc: {
         include: [],
         port: 2000
@@ -61,7 +62,7 @@ avaTest("Manifest properties must be private", async(assert) => {
     });
 
     assert.is(Object.keys(manifest).length, 0);
-    assert.is(Reflect.ownKeys(manifest).length, 7);
+    assert.is(Reflect.ownKeys(manifest).length, 8);
     assert.is(manifest.name, "project");
     assert.is(manifest.version, "2.0.0");
     assert.is(manifest.type, "Addon");
@@ -75,6 +76,7 @@ avaTest("manifest toJSON()", (assert) => {
         type: "Addon",
         dependencies: {},
         org: null,
+        platform: "Any",
         doc: {
             include: [],
             port: 2000

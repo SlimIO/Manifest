@@ -9,6 +9,7 @@ declare class Manifest {
     readonly doc: Manifest.Documentation;
     readonly psp: Manifest.psp;
     readonly org: string | null;
+    readonly platform: Manifest.Platform;
     public static DEFAULT_FILE: string;
     public static TYPES: Readonly<Set<string>>
     public static DEFAULT_DOC_PORT: number;
@@ -24,6 +25,7 @@ declare class Manifest {
 
 declare namespace Manifest {
     type Type = "Addon" | "NAPI" | "CLI" | "Package";
+    type Platform = "Any" | "Windows" | "Unix";
 
     interface psp {
         npmrc: boolean;
@@ -45,6 +47,7 @@ declare namespace Manifest {
         type: Type;
         org?: string;
         dependencies?: Dependencies;
+        platform?: Platform;
         doc?: {
             include?: string[];
             port?: number;
