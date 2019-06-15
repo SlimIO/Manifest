@@ -30,7 +30,7 @@
         "@slimio/is": "^1.5.1",
         "lodash.clonedeep": "^4.5.0",
         "ow": "^0.13.2",
-        "semver": "^6.0.0"
+        "semver": "^6.1.1"
     },
     "devDependencies": {
         "@commitlint/cli": "^8.0.0",
