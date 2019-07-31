@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node.js Dependencies
 const { promises: { unlink, access, readFile }, existsSync } = require("fs");
 const { join } = require("path");
@@ -43,6 +45,11 @@ avaTest.after(async(assert) => {
     assert.pass();
 });
 
+/**
+ * @function
+ * @param {object} obj
+ * @returns {object}
+ */
 function modifValidobj(obj) {
     return Object.assign(cloneDeep(VALID_OBJ), obj);
 }

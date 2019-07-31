@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node Dependencies
 const { isAbsolute, extname } = require("path");
 
@@ -13,8 +15,8 @@ const semver = require("semver");
  * @version 0.1.0
  * @function assertFilePath
  * @memberof Assert#
- * @desc File path checker
- * @param {!String} filePath File path
+ * @description File path checker
+ * @param {!string} filePath File path
  * @returns {void}
  *
  * @throws {TypeError}
@@ -36,10 +38,10 @@ function assertFilePath(filePath) {
  * @version 0.1.0
  * @function assertVersion
  * @memberof Assert#
- * @desc Sementic versionning checker
- * @param {!String} paramName Param name checking
- * @param {!String} value Sementic versionning value
- * @return {String}
+ * @description Sementic versionning checker
+ * @param {!string} paramName Param name checking
+ * @param {!string} value Sementic versionning value
+ * @returns {string}
  *
  * @throws {Error}
  */

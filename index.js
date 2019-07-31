@@ -1,3 +1,5 @@
+"use strict";
+
 // Require Node Dependencies
 const { readFileSync, writeFileSync, existsSync } = require("fs");
 const { join, extname } = require("path");
@@ -11,25 +13,25 @@ const cloneDeep = require("lodash.clonedeep");
 const { assertFilePath, assertVersion } = require("./src/assert");
 
 /**
- * @typedef {Object} Doc
- * @property {String[]} include
- * @property {Number} port
+ * @typedef {object} Doc
+ * @property {string[]} include
+ * @property {number} port
  */
 
 /**
- * @typedef {Object} psp
- * @property {Boolean} npmrc
- * @property {Boolean} jsdoc
+ * @typedef {object} psp
+ * @property {boolean} npmrc
+ * @property {boolean} jsdoc
  */
 
 /**
- * @typedef {Object} Payload
- * @property {String} name Name config
- * @property {String} version Version config
- * @property {String} type Type project config
- * @property {String} org Organization name
- * @property {String} platform platform
- * @property {Object} dependencies Addon dependencies config
+ * @typedef {object} Payload
+ * @property {string} name Name config
+ * @property {string} version Version config
+ * @property {string} type Type project config
+ * @property {string} org Organization name
+ * @property {string} platform platform
+ * @property {object} dependencies Addon dependencies config
  * @property {Doc} doc
  * @property {psp} psp
  */
@@ -46,16 +48,16 @@ const symPlatform = Symbol("platform");
 
 /**
  * @class Manifest
- * @property {String} name Name config
- * @property {String} version Version config
- * @property {String} type Type project config
- * @property {String|null} org organization name
- * @property {String} platform specific platform
- * @property {Object} dependencies Addon dependencies config
+ * @property {string} name Name config
+ * @property {string} version Version config
+ * @property {string} type Type project config
+ * @property {string|null} org organization name
+ * @property {string} platform specific platform
+ * @property {object} dependencies Addon dependencies config
  */
 class Manifest {
     /**
-     * @constructor
+     * @class
      * @memberof Manifest
      * @param {!Payload} payload Payload config
      *
@@ -111,10 +113,10 @@ class Manifest {
     }
 
     /**
-     * @method addDependency
+     * @function addDependency
      * @memberof Manifest
-     * @param {!String} name dependency name
-     * @param {!String} version dependency version
+     * @param {!string} name dependency name
+     * @param {!string} version dependency version
      * @returns {void}
      *
      * @throws {Error}
@@ -132,10 +134,10 @@ class Manifest {
     }
 
     /**
-     * @method hasDependency
+     * @function hasDependency
      * @memberof Manifest
-     * @param {!String} name dependency name
-     * @returns {Boolean}
+     * @param {!string} name dependency name
+     * @returns {boolean}
      */
     hasDependency(name) {
         return Reflect.has(this[symDep], name);
@@ -143,8 +145,9 @@ class Manifest {
 
     /**
      * @version 0.1.0
-     * @member {String} name
+     * @member {string} name
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get name() {
         return this[symName];
@@ -152,8 +155,9 @@ class Manifest {
 
     /**
      * @version 0.1.0
-     * @member {String} version
+     * @member {string} version
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get version() {
         return this[symVer];
@@ -161,8 +165,9 @@ class Manifest {
 
     /**
      * @version 0.4.0
-     * @member {String} org
+     * @member {string} org
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get org() {
         return this[symOrg];
@@ -170,8 +175,9 @@ class Manifest {
 
     /**
      * @version 0.1.0
-     * @member {String} type
+     * @member {string} type
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get type() {
         return this[symType];
@@ -179,8 +185,9 @@ class Manifest {
 
     /**
      * @version 0.1.0
-     * @member {String} platform
+     * @member {string} platform
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get platform() {
         return this[symPlatform];
@@ -188,8 +195,9 @@ class Manifest {
 
     /**
      * @version 0.1.0
-     * @member {Object} dependencies
+     * @member {object} dependencies
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get dependencies() {
         return cloneDeep(this[symDep]);
@@ -199,6 +207,7 @@ class Manifest {
      * @version 0.2.0
      * @member {Doc} doc
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get doc() {
         return cloneDeep(this[symDoc]);
@@ -208,6 +217,7 @@ class Manifest {
      * @version 0.3.0
      * @member {psp} psp
      * @memberof Manifest
+     * @returns {symbol<string>}
      */
     get psp() {
         return cloneDeep(this[symPsp]);
@@ -217,12 +227,12 @@ class Manifest {
      * @version 0.1.0
      *
      * @static
-     * @method create
-     * @desc Create a new manifest file on the disk, return a Manifest Object.
+     * @function create
+     * @description Create a new manifest file on the disk, return a Manifest Object.
      * @memberof Manifest
      * @param {!Payload} config Config manifest
-     * @param {String} [filePath] filePath
-     * @param {Boolean} [lightMode=false] activate light mode
+     * @param {string} [filePath] filePath
+     * @param {boolean} [lightMode=false] activate light mode
      * @returns {Manifest}
      *
      * @throws {Error}
@@ -252,10 +262,10 @@ class Manifest {
      * @version 0.1.0
      *
      * @static
-     * @method open
-     * @desc Open and read an existing manifest file (.toml). Return a Manifest Object.
+     * @function open
+     * @description Open and read an existing manifest file (.toml). Return a Manifest Object.
      * @memberof Manifest
-     * @param {String=} filePath File path
+     * @param {string} [filePath] File path
      * @returns {Manifest}
      *
      * @example
@@ -275,11 +285,11 @@ class Manifest {
      * @version 0.1.0
      *
      * @static
-     * @method writeOnDisk
-     * @desc Write the manifest file (.toml) on the disk (the file must exist).
+     * @function writeOnDisk
+     * @description Write the manifest file (.toml) on the disk (the file must exist).
      * @memberof Manifest
      * @param {!Manifest} manifest manifest
-     * @param {String} [filePath] filePath
+     * @param {string} [filePath] filePath
      * @returns {void}
      *
      * @throws {TypeError}
@@ -305,9 +315,9 @@ class Manifest {
      * @version 0.1.0
      *
      * @public
-     * @method toJSON
+     * @function toJSON
      * @memberof Manifest
-     * @desc Transform Manifest Object to a valid JSON payload.
+     * @description Transform Manifest Object to a valid JSON payload.
      * @returns {Payload}
      */
     toJSON() {
@@ -334,7 +344,7 @@ Manifest.DEFAULT_OPTIONS = {
     psp: Object.create(null)
 };
 
-/** @type {Readonly<Set<String>>} */
+/** @type {Readonly<Set<string>>} */
 Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI", "Package", "Service"]));
 
 Object.preventExtensions(Manifest);
