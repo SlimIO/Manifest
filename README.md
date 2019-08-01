@@ -13,7 +13,7 @@ This package was created to manage the [manifest file](https://en.wikipedia.org/
 > ⚠️ This package read and write with Synchronous Node.js API
 
 ## Requirements
-- Node.js v10 or higher
+- [Node.js](https://nodejs.org/en/) v10 or higher
 
 ## Getting Started
 
@@ -42,12 +42,23 @@ const manifest = Manifest.open();
 console.log(`name => ${manifest.name}`);
 ```
 
+## Available Types
+
+| name | description |
+| --- | --- |
+| Addon | Describe a SlimIO Addon |
+| NAPI | A Node.js low-level binding in C or C++ with the new N-API |
+| CLI | A command line interface project |
+| Package | A classical npm/Node.js package |
+| Service | A web API |
+| Degraded | A project that doesn't match classical SlimIO policies like the eslint-config one |
+
 ## API
 Following methods are members of **Manifest** class. Some types are described in the TypeScript namespace as follow:
 
 ```ts
 declare namespace Manifest {
-    type Type = "Addon" | "NAPI" | "CLI" | "Package";
+    type Type = "Addon" | "NAPI" | "CLI" | "Package" | "Service" | "Degraded";
     type Platform = "Any" | "Windows" | "Unix";
 
     interface psp {
