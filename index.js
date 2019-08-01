@@ -6,7 +6,8 @@ const { join, extname } = require("path");
 
 // Require Third-party Dependencies
 const TOML = require("@iarna/toml");
-const ow = require("ow");
+const is = require("@slimio/is");
+const argc = require("@slimio/arg-checker");
 const cloneDeep = require("lodash.clonedeep");
 
 // Require Internal Dependencies
@@ -70,16 +71,16 @@ class Manifest {
      * });
      */
     constructor(payload) {
-        ow(payload, ow.object);
+        argc(payload, is.plainObject);
 
         const {
             name, version, type, org, dependencies, doc, psp, platform = "Any"
         } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
-        ow(name, ow.string);
-        ow(doc, ow.object);
-        ow(psp, ow.object);
-        ow(platform, ow.string);
-        ow(org, ow.any(ow.string, ow.null, ow.undefined));
+        argc(name, is.string);
+        argc(doc, is.plainObject);
+        argc(psp, is.plainObject);
+        argc(platform, is.string);
+        argc(org, [is.string, is.nullOrUndefined]);
 
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
         const { jsdoc = true, npmrc = true } = psp;
@@ -88,11 +89,11 @@ class Manifest {
         if (!Manifest.TYPES.has(type)) {
             throw new TypeError(`payload.type must be one <string> of the Set : ${[...Manifest.TYPES]}`);
         }
-        ow(dependencies, ow.object);
-        ow(include, ow.array);
-        ow(port, ow.number);
-        ow(npmrc, ow.boolean);
-        ow(jsdoc, ow.boolean);
+        argc(dependencies, is.plainObject);
+        argc(include, is.array);
+        argc(port, is.number);
+        argc(npmrc, is.boolean);
+        argc(jsdoc, is.boolean);
 
         // Note: doc.include must contain string with a '.js' extension
         const includeFinal = include.filter((file) => typeof file === "string" && extname(file) === ".js");

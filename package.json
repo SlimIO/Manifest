@@ -27,9 +27,9 @@
     "homepage": "https://github.com/SlimIO/Manifester#readme",
     "dependencies": {
         "@iarna/toml": "^2.2.3",
+        "@slimio/arg-checker": "^0.1.1",
         "@slimio/is": "^1.5.1",
         "lodash.clonedeep": "^4.5.0",
-        "ow": "^0.13.2",
         "semver": "^6.1.1"
     },
     "devDependencies": {
