@@ -24,7 +24,7 @@ declare class Manifest {
 }
 
 declare namespace Manifest {
-    type Type = "Addon" | "NAPI" | "CLI" | "Package";
+    type Type = "Addon" | "NAPI" | "CLI" | "Package" | "Service" | "Degraded";
     type Platform = "Any" | "Windows" | "Unix";
 
     interface psp {

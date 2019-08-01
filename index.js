@@ -345,7 +345,7 @@ Manifest.DEFAULT_OPTIONS = {
 };
 
 /** @type {Readonly<Set<string>>} */
-Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI", "Package", "Service"]));
+Manifest.TYPES = Object.freeze(new Set(["Addon", "NAPI", "CLI", "Package", "Service", "Degraded"]));
 
 Object.preventExtensions(Manifest);
 

@@ -13,7 +13,7 @@ const toml = require("@iarna/toml");
 
 Manifest.DEFAULT_FILE = join(process.cwd(), "default.toml");
 
-const Types = new Set(["Addon", "NAPI", "CLI", "Package", "Service"]);
+const Types = new Set(["Addon", "NAPI", "CLI", "Package", "Service", "Degraded"]);
 const VALID_OBJ = {
     name: "My project",
     version: "7.7.7",
