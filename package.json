@@ -19,6 +19,11 @@
         "monitoring",
         "manifest"
     ],
+    "files": [
+        "index.js",
+        "index.d.ts",
+        "src/assert.js"
+    ],
     "author": "SlimIO",
     "license": "MIT",
     "bugs": {
