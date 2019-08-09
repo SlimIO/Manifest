@@ -25,6 +25,7 @@ const VALID_OBJ = {
         port: 2000
     },
     psp: {
+        exclude: [],
         npmrc: true,
         jsdoc: true
     },
@@ -89,6 +90,7 @@ avaTest("manifest toJSON()", (assert) => {
             port: 2000
         },
         psp: {
+            exclude: [],
             jsdoc: true,
             npmrc: true
         }
