@@ -83,7 +83,7 @@ class Manifest {
         argc(org, [is.string, is.nullOrUndefined]);
 
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
-        const { jsdoc = true, npmrc = true } = psp;
+        const { jsdoc = true, npmrc = true, exclude = [] } = psp;
 
         const validSemver = assertVersion("payload.version", version);
         if (!Manifest.TYPES.has(type)) {
@@ -91,6 +91,7 @@ class Manifest {
         }
         argc(dependencies, is.plainObject);
         argc(include, is.array);
+        argc(exclude, is.array);
         argc(port, is.number);
         argc(npmrc, is.boolean);
         argc(jsdoc, is.boolean);
@@ -107,7 +108,7 @@ class Manifest {
             value: Object.create(null)
         });
         Reflect.defineProperty(this, symDoc, { value: { port, include: includeFinal } });
-        Reflect.defineProperty(this, symPsp, { value: { jsdoc, npmrc } });
+        Reflect.defineProperty(this, symPsp, { value: { jsdoc, npmrc, exclude } });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
         }

@@ -30,6 +30,7 @@ declare namespace Manifest {
     interface psp {
         npmrc: boolean;
         jsdoc: boolean;
+        exclude: string[];
     }
 
     interface Documentation {
@@ -48,10 +49,8 @@ declare namespace Manifest {
         org?: string;
         dependencies?: Dependencies;
         platform?: Platform;
-        doc?: {
-            include?: string[];
-            port?: number;
-        }
+        psp?: psp;
+        doc?: Documentation;
     }
 }
 
