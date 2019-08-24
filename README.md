@@ -217,14 +217,14 @@ Default documentation port (equal to **2000** by default).
 </details>
 
 ## Dependencies
-This project is covered by the SlimIO security policy and undergoes regular security audits.
 
-| Name | Refactoring | Security Risk | Usage |
-| --- | --- | --- | --- |
-| [@slimio/is](https://github.com/SlimIO/is#readme) | Minor | Low | Type checker |
-| [lodash.clonedeep](https://lodash.com/) | Minor | Low | Clone deep Objects |
-| [semver](https://lodash.com/) | Major | Low | Assert manifest version as SemVer |
-| [@iarna/toml](https://lodash.com/) | Major | Medium | Parse TOML, Stringify JSON into TOML |
+|Name|Refactoring|Security Risk|Usage|
+|---|---|---|---|
+|[@iarna/toml](https://github.com/iarna/iarna-toml#readme)|Minor|Low|Parse and read .toml file|
+|[@slimio/arg-checker](https://github.com/SlimIO/arg-checker)|Minor|Low|Argument Checker|
+|[@slimio/is](https://github.com/SlimIO/is)|Minor|Low|JavaScript Type checker|
+|[lodash.clonedeep](https://github.com/lodash/lodash)|Minor|Low|Clone deep an Object|
+|[semver](https://github.com/npm/node-semver)|⚠️Major|Low|Semver parser/utilities for node|
 
 ## License
 MIT
