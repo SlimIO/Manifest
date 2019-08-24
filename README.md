@@ -1,16 +1,22 @@
 # Manifest
 
 ![Version](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/SlimIO/Manifest/master/package.json?token=Aeue0OHXB6Ozx8agcA1fkbEC6bCdL6epks5cearKwA%3D%3D&query=$.version&label=Version)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/is/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SlimIO/Manifest/commit-activity)
 ![MIT](https://img.shields.io/github/license/mashape/apistatus.svg)
 ![dep](https://img.shields.io/david/SlimIO/Manifest.svg)
 ![size](https://img.shields.io/bundlephobia/min/@slimio/manifest.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/SlimIO/Manifest/badge.svg?targetFile=package.json)](https://snyk.io/test/github/SlimIO/Manifest?targetFile=package.json)
 [![Build Status](https://travis-ci.com/SlimIO/Manifest.svg?branch=master)](https://travis-ci.com/SlimIO/Manifest) [![Greenkeeper badge](https://badges.greenkeeper.io/SlimIO/Manifest.svg)](https://greenkeeper.io/)
 
-This package was created to manage the [manifest file](https://en.wikipedia.org/wiki/Manifest_file) of SlimIO packages and addons. The manifest is useful to the CLI or any others tooling (psp etc..).
+This package was created to manage the [manifest file](https://en.wikipedia.org/wiki/Manifest_file) of SlimIO projects. The manifest is useful when we need to describe specific behaviors and settings in our internals tools or to our global product. Some examples are:
 
-> ⚠️ This package read and write with Synchronous Node.js API
+- To create Addon archive the right way with the right parameters
+- To the CLI to known the current addon dependencies (like npm).
+- To disable given psp warnings (like eslint when you disable a rule).
+
+Some might bring the question of why creating a dedicated manifest. The answer is simple: We did not want to add more keys and complexity to the package.json and bring a clean concern separation.
+
+> ⚠️ This package read and write with Synchronous Node.js API. This package has been designed to be used as a tool or at runtime.
 
 ## Requirements
 - [Node.js](https://nodejs.org/en/) v10 or higher
