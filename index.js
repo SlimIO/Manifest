@@ -43,15 +43,6 @@ const symDep = Symbol("dependencies");
 const symDoc = Symbol("doc");
 const symPsp = Symbol("psp");
 
-/**
- * @class Manifest
- * @property {string} name Name config
- * @property {string} version Version config
- * @property {string} type Type project config
- * @property {string|null} org organization name
- * @property {string} platform specific platform
- * @property {object} dependencies Addon dependencies config
- */
 class Manifest {
     /**
      * @class
