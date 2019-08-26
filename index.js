@@ -50,6 +50,8 @@ class Manifest {
      * @param {!Payload} payload Payload config
      *
      * @throws {TypeError}
+     * @throws {Error}
+     *
      * @example
      * const manifest = new Manifest({
      *     name: "my-project",
@@ -61,14 +63,18 @@ class Manifest {
         argc(payload, is.plainObject);
 
         const {
-            name, version, type, org, dependencies, doc, psp, platform = "Any"
+            name, version, type, org, dependencies, doc, psp, platform = "Any", required_core
         } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
         argc(name, is.string);
         argc(doc, is.plainObject);
         argc(psp, is.plainObject);
         argc(platform, is.string);
         argc(org, [is.string, is.nullOrUndefined]);
+        argc(required_core, [is.string, is.nullOrUndefined]);
 
+        if (is.string(required_core) && type !== "Addon") {
+            throw new Error("required_core is only available for 'Addon' projects!");
+        }
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
         const { jsdoc = true, npmrc = true, exclude = [] } = psp;
 
@@ -86,6 +92,8 @@ class Manifest {
         // Note: doc.include must contain string with a '.js' extension
         const includeFinal = include.filter((file) => typeof file === "string" && extname(file) === ".js");
 
+        // eslint-disable-next-line
+        freezedProperty(this, "required_core", required_core || null);
         freezedProperty(this, "name", name);
         freezedProperty(this, "type", type);
         freezedProperty(this, "version", validSemver);
@@ -265,6 +273,7 @@ class Manifest {
             version: this.version,
             type: this.type,
             org: this.org,
+            required_core: this.required_core,
             dependencies: this.dependencies,
             platform: this.platform,
             doc: this.doc,

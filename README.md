@@ -70,6 +70,7 @@ declare namespace Manifest {
     interface psp {
         npmrc: boolean;
         jsdoc: boolean;
+        exclude: string[];
     }
 
     interface Documentation {
@@ -85,12 +86,12 @@ declare namespace Manifest {
         name: string;
         version: string;
         type: Type;
+        required_core?: string;
+        org?: string;
         dependencies?: Dependencies;
         platform?: Platform;
-        doc?: {
-            include?: string[];
-            port?: number;
-        }
+        psp?: psp;
+        doc?: Documentation;
     }
 }
 ```
@@ -176,8 +177,9 @@ class Manifest {
     readonly dependencies: Manifest.Dependencies;
     readonly doc: Manifest.Documentation;
     readonly psp: Manifest.psp;
-    readonly platform: Manifest.platform;
-    readonly org: string;
+    readonly org: string | null;
+    readonly required_core: string | null;
+    readonly platform: Manifest.Platform;
 }
 ```
 
@@ -223,6 +225,7 @@ Default documentation port (equal to **2000** by default).
 |[@iarna/toml](https://github.com/iarna/iarna-toml#readme)|Minor|Low|Parse and read .toml file|
 |[@slimio/arg-checker](https://github.com/SlimIO/arg-checker)|Minor|Low|Argument Checker|
 |[@slimio/is](https://github.com/SlimIO/is)|Minor|Low|JavaScript Type checker|
+|[@slimio/immutable](https://github.com/SlimIO/Immutable#readme)|Minor|Low|Immutable utils|
 |[lodash.clonedeep](https://github.com/lodash/lodash)|Minor|Low|Clone deep an Object|
 |[semver](https://github.com/npm/node-semver)|⚠️Major|Low|Semver parser/utilities for node|
 

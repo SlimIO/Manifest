@@ -9,6 +9,7 @@ declare class Manifest {
     readonly doc: Manifest.Documentation;
     readonly psp: Manifest.psp;
     readonly org: string | null;
+    readonly required_core: string | null;
     readonly platform: Manifest.Platform;
     public static DEFAULT_FILE: string;
     public static TYPES: Readonly<Set<string>>
@@ -46,6 +47,7 @@ declare namespace Manifest {
         name: string;
         version: string;
         type: Type;
+        required_core?: string;
         org?: string;
         dependencies?: Dependencies;
         platform?: Platform;
