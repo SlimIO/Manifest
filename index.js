@@ -9,6 +9,7 @@ const TOML = require("@iarna/toml");
 const is = require("@slimio/is");
 const argc = require("@slimio/arg-checker");
 const cloneDeep = require("lodash.clonedeep");
+const { freezedProperty } = require("@slimio/immutable");
 
 // Require Internal Dependencies
 const { assertFilePath, assertVersion } = require("./src/assert");
@@ -38,14 +39,9 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  */
 
 // Symbols
-const symName = Symbol("name");
-const symVer = Symbol("version");
-const symType = Symbol("type");
 const symDep = Symbol("dependencies");
 const symDoc = Symbol("doc");
 const symPsp = Symbol("psp");
-const symOrg = Symbol("org");
-const symPlatform = Symbol("platform");
 
 /**
  * @class Manifest
@@ -99,11 +95,11 @@ class Manifest {
         // Note: doc.include must contain string with a '.js' extension
         const includeFinal = include.filter((file) => typeof file === "string" && extname(file) === ".js");
 
-        Reflect.defineProperty(this, symName, { value: name });
-        Reflect.defineProperty(this, symVer, { value: validSemver });
-        Reflect.defineProperty(this, symType, { value: type });
-        Reflect.defineProperty(this, symPlatform, { value: platform });
-        Reflect.defineProperty(this, symOrg, { value: org || null });
+        freezedProperty(this, "name", name);
+        freezedProperty(this, "type", type);
+        freezedProperty(this, "version", validSemver);
+        freezedProperty(this, "platform", platform);
+        freezedProperty(this, "org", org || null);
         Reflect.defineProperty(this, symDep, {
             value: Object.create(null)
         });
@@ -143,56 +139,6 @@ class Manifest {
      */
     hasDependency(name) {
         return Reflect.has(this[symDep], name);
-    }
-
-    /**
-     * @version 0.1.0
-     * @member {string} name
-     * @memberof Manifest
-     * @returns {symbol<string>}
-     */
-    get name() {
-        return this[symName];
-    }
-
-    /**
-     * @version 0.1.0
-     * @member {string} version
-     * @memberof Manifest
-     * @returns {symbol<string>}
-     */
-    get version() {
-        return this[symVer];
-    }
-
-    /**
-     * @version 0.4.0
-     * @member {string} org
-     * @memberof Manifest
-     * @returns {symbol<string>}
-     */
-    get org() {
-        return this[symOrg];
-    }
-
-    /**
-     * @version 0.1.0
-     * @member {string} type
-     * @memberof Manifest
-     * @returns {symbol<string>}
-     */
-    get type() {
-        return this[symType];
-    }
-
-    /**
-     * @version 0.1.0
-     * @member {string} platform
-     * @memberof Manifest
-     * @returns {symbol<string>}
-     */
-    get platform() {
-        return this[symPlatform];
     }
 
     /**

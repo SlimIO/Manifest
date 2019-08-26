@@ -33,6 +33,7 @@
     "dependencies": {
         "@iarna/toml": "^2.2.3",
         "@slimio/arg-checker": "^0.1.1",
+        "@slimio/immutable": "^0.1.0",
         "@slimio/is": "^1.5.1",
         "lodash.clonedeep": "^4.5.0",
         "semver": "^6.1.1"
