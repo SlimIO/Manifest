@@ -19,7 +19,7 @@ Some might bring the question of why creating a dedicated manifest. The answer i
 > ⚠️ This package read and write with Synchronous Node.js API. This package has been designed to be used as a tool or at runtime.
 
 ## Requirements
-- [Node.js](https://nodejs.org/en/) v10 or higher
+- [Node.js](https://nodejs.org/en/) v12 or higher
 
 ## Getting Started
 
