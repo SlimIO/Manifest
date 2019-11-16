@@ -6,7 +6,8 @@
 ![dep](https://img.shields.io/david/SlimIO/Manifest.svg)
 ![size](https://img.shields.io/bundlephobia/min/@slimio/manifest.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/SlimIO/Manifest/badge.svg?targetFile=package.json)](https://snyk.io/test/github/SlimIO/Manifest?targetFile=package.json)
-[![Build Status](https://travis-ci.com/SlimIO/Manifest.svg?branch=master)](https://travis-ci.com/SlimIO/Manifest) [![Greenkeeper badge](https://badges.greenkeeper.io/SlimIO/Manifest.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.com/SlimIO/Manifest.svg?branch=master)](https://travis-ci.com/SlimIO/Manifest)
+[![Greenkeeper badge](https://badges.greenkeeper.io/SlimIO/Manifest.svg)](https://greenkeeper.io/)
 
 This package was created to manage the [manifest file](https://en.wikipedia.org/wiki/Manifest_file) of SlimIO projects. The manifest is useful when we need to describe specific behaviors and settings in our internals tools or to our global product. Some examples are:
 
