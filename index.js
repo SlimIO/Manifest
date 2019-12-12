@@ -78,6 +78,7 @@ class Manifest {
             throw new Error("required_core is only available for 'Addon' projects!");
         }
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
+        // eslint-disable-next-line camelcase
         const { jsdoc = true, npmrc = true, disabled_dependency = [], exclude = [] } = psp;
 
         const validSemver = assertVersion("payload.version", version);
