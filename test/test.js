@@ -27,6 +27,7 @@ const VALID_OBJ = {
     },
     psp: {
         exclude: [],
+        disabled_dependency: [],
         npmrc: true,
         jsdoc: true
     },
@@ -92,6 +93,7 @@ avaTest("manifest toJSON()", (assert) => {
         },
         psp: {
             exclude: [],
+            disabled_dependency: [],
             jsdoc: true,
             npmrc: true
         }

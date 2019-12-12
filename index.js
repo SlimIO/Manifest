@@ -24,6 +24,8 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  * @typedef {object} psp
  * @property {boolean} npmrc
  * @property {boolean} jsdoc
+ * @property {string[]} disabled_dependency
+ * @property {string[]} exclude
  */
 
 /**
@@ -76,7 +78,7 @@ class Manifest {
             throw new Error("required_core is only available for 'Addon' projects!");
         }
         const { port = Manifest.DEFAULT_DOC_PORT, include = [] } = doc;
-        const { jsdoc = true, npmrc = true, exclude = [] } = psp;
+        const { jsdoc = true, npmrc = true, disabled_dependency = [], exclude = [] } = psp;
 
         const validSemver = assertVersion("payload.version", version);
         if (!Manifest.TYPES.has(type)) {
@@ -85,6 +87,7 @@ class Manifest {
         argc(dependencies, is.plainObject);
         argc(include, is.array);
         argc(exclude, is.array);
+        argc(disabled_dependency, is.array);
         argc(port, is.number);
         argc(npmrc, is.boolean);
         argc(jsdoc, is.boolean);
@@ -103,7 +106,7 @@ class Manifest {
             value: Object.create(null)
         });
         Reflect.defineProperty(this, symDoc, { value: { port, include: includeFinal } });
-        Reflect.defineProperty(this, symPsp, { value: { jsdoc, npmrc, exclude } });
+        Reflect.defineProperty(this, symPsp, { value: { jsdoc, npmrc, disabled_dependency, exclude } });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
         }

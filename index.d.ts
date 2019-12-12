@@ -31,6 +31,7 @@ declare namespace Manifest {
     interface psp {
         npmrc: boolean;
         jsdoc: boolean;
+        disabled_dependency: string[];
         exclude: string[];
     }
 
