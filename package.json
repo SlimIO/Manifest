@@ -36,7 +36,7 @@
         "@slimio/immutable": "^0.1.0",
         "@slimio/is": "^1.5.1",
         "lodash.clonedeep": "^4.5.0",
-        "semver": "^6.1.1"
+        "semver": "^7.0.0"
     },
     "devDependencies": {
         "@commitlint/cli": "^8.2.0",
