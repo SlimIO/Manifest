@@ -36,6 +36,7 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  * @property {string} org Organization name
  * @property {string} platform platform
  * @property {object} dependencies Addon dependencies config
+ * @property {object} notes other notes for put somes keys/values
  * @property {Doc} doc
  * @property {psp} psp
  */
@@ -44,6 +45,7 @@ const { assertFilePath, assertVersion } = require("./src/assert");
 const symDep = Symbol("dependencies");
 const symDoc = Symbol("doc");
 const symPsp = Symbol("psp");
+const symNotes = Symbol("notes");
 
 class Manifest {
     /**
@@ -65,7 +67,7 @@ class Manifest {
         argc(payload, is.plainObject);
 
         const {
-            name, version, type, org, dependencies, doc, psp, platform = "Any", required_core
+            name, version, type, org, dependencies, doc, psp, notes, platform = "Any", required_core
         } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
         argc(name, is.string);
         argc(doc, is.plainObject);
@@ -86,6 +88,7 @@ class Manifest {
             throw new TypeError(`payload.type must be one <string> of the Set : ${[...Manifest.TYPES]}`);
         }
         argc(dependencies, is.plainObject);
+        argc(notes, is.plainObject);
         argc(include, is.array);
         argc(exclude, is.array);
         argc(disabled_dependency, is.array);
@@ -106,10 +109,16 @@ class Manifest {
         Reflect.defineProperty(this, symDep, {
             value: Object.create(null)
         });
+        Reflect.defineProperty(this, symNotes, {
+            value: Object.create(null)
+        });
         Reflect.defineProperty(this, symDoc, { value: { port, include: includeFinal } });
         Reflect.defineProperty(this, symPsp, { value: { jsdoc, npmrc, disabled_dependency, exclude } });
         for (const [name, version] of Object.entries(dependencies)) {
             this.addDependency(name, version);
+        }
+        for (const [key, value] of Object.entries(notes)) {
+            Reflect.set(this[symNotes], key, value);
         }
     }
 
@@ -152,6 +161,16 @@ class Manifest {
      */
     get dependencies() {
         return cloneDeep(this[symDep]);
+    }
+
+    /**
+     * @version 0.1.0
+     * @member {object} notes
+     * @memberof Manifest
+     * @returns {symbol<string>}
+     */
+    get notes() {
+        return cloneDeep(this[symNotes]);
     }
 
     /**
@@ -279,6 +298,7 @@ class Manifest {
             org: this.org,
             required_core: this.required_core,
             dependencies: this.dependencies,
+            notes: this.notes,
             platform: this.platform,
             doc: this.doc,
             psp: this.psp
@@ -292,6 +312,7 @@ Manifest.DEFAULT_FILE = join(process.cwd(), "slimio.toml");
 Manifest.DEFAULT_DOC_PORT = 2000;
 Manifest.DEFAULT_OPTIONS = {
     dependencies: Object.create(null),
+    notes: Object.create(null),
     doc: { include: [], port: Manifest.DEFAULT_DOC_PORT },
     psp: Object.create(null)
 };
