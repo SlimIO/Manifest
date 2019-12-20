@@ -84,6 +84,10 @@ declare namespace Manifest {
         [name: string]: string;
     }
 
+    interface Notes {
+        [name: string]: string;
+    }
+
     interface Payload {
         name: string;
         version: string;
@@ -94,6 +98,7 @@ declare namespace Manifest {
         platform?: Platform;
         psp?: psp;
         doc?: Documentation;
+        notes?: Notes;
     }
 }
 ```
@@ -179,6 +184,7 @@ class Manifest {
     readonly dependencies: Manifest.Dependencies;
     readonly doc: Manifest.Documentation;
     readonly psp: Manifest.psp;
+    readonly notes: Manifest.Notes;
     readonly org: string | null;
     readonly required_core: string | null;
     readonly platform: Manifest.Platform;
