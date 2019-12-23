@@ -33,6 +33,9 @@ const VALID_OBJ = {
     },
     dependencies: {
         Event: "1.1.1"
+    },
+    notes: {
+        key: "value"
     }
 };
 
@@ -84,6 +87,7 @@ avaTest("manifest toJSON()", (assert) => {
         version: "2.0.0",
         type: "Addon",
         dependencies: {},
+        notes: {},
         org: null,
         required_core: null,
         platform: "Any",
