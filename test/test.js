@@ -36,7 +36,8 @@ const VALID_OBJ = {
     },
     notes: {
         key: "value"
-    }
+    },
+    config: null
 };
 
 avaTest.after(async(assert) => {
@@ -100,7 +101,8 @@ avaTest("manifest toJSON()", (assert) => {
             disabled_dependency: [],
             jsdoc: true,
             npmrc: true
-        }
+        },
+        config: "config"
     };
     const manifest = new Manifest(payload);
     assert.deepEqual(payload, manifest.toJSON());

@@ -39,6 +39,7 @@ const { assertFilePath, assertVersion } = require("./src/assert");
  * @property {object} notes other notes for put somes keys/values
  * @property {Doc} doc
  * @property {psp} psp
+ * @property {string} config config path
  */
 
 // Symbols
@@ -67,7 +68,7 @@ class Manifest {
         argc(payload, is.plainObject);
 
         const {
-            name, version, type, org, dependencies, doc, psp, notes, platform = "Any", required_core
+            name, version, type, org, dependencies, doc, psp, notes, platform = "Any", required_core, config
         } = Object.assign({}, Manifest.DEFAULT_OPTIONS, payload);
         argc(name, is.string);
         argc(doc, is.plainObject);
@@ -75,6 +76,7 @@ class Manifest {
         argc(platform, is.string);
         argc(org, [is.string, is.nullOrUndefined]);
         argc(required_core, [is.string, is.nullOrUndefined]);
+        argc(config, [is.string, is.nullOrUndefined]);
 
         if (is.string(required_core) && type !== "Addon") {
             throw new Error("required_core is only available for 'Addon' projects!");
@@ -106,6 +108,8 @@ class Manifest {
         freezedProperty(this, "version", validSemver);
         freezedProperty(this, "platform", platform);
         freezedProperty(this, "org", org || null);
+        freezedProperty(this, "config", config || null);
+
         Reflect.defineProperty(this, symDep, {
             value: Object.create(null)
         });
@@ -301,7 +305,8 @@ class Manifest {
             notes: this.notes,
             platform: this.platform,
             doc: this.doc,
-            psp: this.psp
+            psp: this.psp,
+            config: this.config
         };
 
         return ret;

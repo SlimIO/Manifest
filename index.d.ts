@@ -12,6 +12,7 @@ declare class Manifest {
     readonly org: string | null;
     readonly required_core: string | null;
     readonly platform: Manifest.Platform;
+    readonly config: string | null;
     public static DEFAULT_FILE: string;
     public static TYPES: Readonly<Set<string>>
     public static DEFAULT_DOC_PORT: number;
@@ -60,6 +61,7 @@ declare namespace Manifest {
         psp?: psp;
         doc?: Documentation;
         notes?: Notes;
+        config?: string;
     }
 }
 
