@@ -1,72 +1,76 @@
 {
-    "name": "@slimio/manifest",
-    "version": "0.9.1",
-    "description": "This package was created to manage manifest for the SlimIO Project.",
-    "main": "index.js",
-    "scripts": {
-        "prepublishOnly": "pkg-ok",
-        "test": "cross-env psp && ava --verbose",
-        "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose",
-        "coverage": "nyc npm test",
-        "report": "nyc report --reporter=html"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/SlimIO/Manifester.git"
-    },
-    "keywords": [
-        "SlimIO",
-        "monitoring",
-        "manifest"
-    ],
-    "files": [
-        "index.js",
-        "index.d.ts",
-        "src/assert.js"
-    ],
-    "author": "SlimIO",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/SlimIO/Manifester/issues"
-    },
-    "homepage": "https://github.com/SlimIO/Manifester#readme",
-    "dependencies": {
-        "@iarna/toml": "^2.2.3",
-        "@slimio/arg-checker": "^0.2.1",
-        "@slimio/immutable": "^0.1.0",
-        "@slimio/is": "^1.5.1",
-        "lodash.clonedeep": "^4.5.0",
-        "semver": "^7.1.2"
-    },
-    "devDependencies": {
-        "@commitlint/cli": "^8.3.5",
-        "@commitlint/config-conventional": "^8.3.4",
-        "@escommunity/minami": "^1.0.0",
-        "@slimio/eslint-config": "^4.0.0",
-        "@slimio/psp": "^0.11.0",
-        "ava": "^3.2.0",
-        "cross-env": "^7.0.0",
-        "eslint": "^6.8.0",
-        "husky": "^4.2.1",
-        "jsdoc": "^3.6.2",
-        "nyc": "^15.0.0",
-        "pkg-ok": "^2.3.1"
-    },
-    "engines": {
-        "node": ">=12"
-    },
-    "husky": {
-        "hooks": {
-            "pre-push": "cross-env eslint index.js src/assert.js && npm test",
-            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-        }
-    },
-    "nyc": {
-        "check-coverage": true,
-        "per-file": false,
-        "lines": 98,
-        "statements": 98,
-        "functions": 98,
-        "branches": 90
+  "name": "@slimio/manifest",
+  "version": "0.9.1",
+  "description": "This package was created to manage manifest for the SlimIO Project.",
+  "main": "index.js",
+  "scripts": {
+    "prepublishOnly": "pkg-ok",
+    "test": "cross-env psp && ava --verbose",
+    "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose",
+    "coverage": "nyc npm test",
+    "report": "nyc report --reporter=html",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SlimIO/Manifester.git"
+  },
+  "keywords": [
+    "SlimIO",
+    "monitoring",
+    "manifest"
+  ],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "src/assert.js"
+  ],
+  "author": "SlimIO",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SlimIO/Manifester/issues"
+  },
+  "homepage": "https://github.com/SlimIO/Manifester#readme",
+  "dependencies": {
+    "@iarna/toml": "^2.2.3",
+    "@slimio/arg-checker": "^0.2.1",
+    "@slimio/immutable": "^0.1.0",
+    "@slimio/is": "^1.5.1",
+    "lodash.clonedeep": "^4.5.0",
+    "semver": "^7.1.2",
+    "snyk": "^1.317.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@escommunity/minami": "^1.0.0",
+    "@slimio/eslint-config": "^4.0.0",
+    "@slimio/psp": "^0.11.0",
+    "ava": "^3.2.0",
+    "cross-env": "^7.0.0",
+    "eslint": "^6.8.0",
+    "husky": "^4.2.1",
+    "jsdoc": "^3.6.2",
+    "nyc": "^15.0.0",
+    "pkg-ok": "^2.3.1"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "cross-env eslint index.js src/assert.js && npm test",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": false,
+    "lines": 98,
+    "statements": 98,
+    "functions": 98,
+    "branches": 90
+  },
+  "snyk": true
 }
